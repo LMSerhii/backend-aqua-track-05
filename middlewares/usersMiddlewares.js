@@ -30,8 +30,6 @@ export const loginUserMiddleware = catchAsync(async (req, res, next) => {
 
   if (!user) throw HttpError(401, "Email or password is wrong");
 
-  if (!user.verify) throw HttpError(401, "Account is not verified");
-
   const isCompare = await user.comparePassword(password);
 
   if (!isCompare) throw HttpError(401, "Email or password is wrong");
@@ -57,7 +55,6 @@ export const updateAvatarMiddleware = catchAsync(async (req, res, next) => {
   const avatarDir = path.join(process.cwd(), "public", "avatars");
 
   const { path: tempUpload, originalname } = req.file;
-  console.log(originalname);
 
   const filename = `${_id}_${originalname}`;
 
@@ -71,7 +68,6 @@ export const updateAvatarMiddleware = catchAsync(async (req, res, next) => {
 
   const user = await updatingAvatar(_id, avatarURL);
 
-  console.log(user);
   req.user = user;
   next();
 });
