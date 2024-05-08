@@ -30,6 +30,8 @@ export const loginUserMiddleware = catchAsync(async (req, res, next) => {
 
   if (!user) throw HttpError(401, "Email or password is wrong");
 
+  if (!user.verify) throw HttpError(401, "Account is not verified");
+
   const isCompare = await user.comparePassword(password);
 
   if (!isCompare) throw HttpError(401, "Email or password is wrong");

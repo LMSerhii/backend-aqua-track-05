@@ -1,4 +1,7 @@
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const { BASE_URL, PORT, MAIL_NAME, MAIL_PSW } = process.env;
 
