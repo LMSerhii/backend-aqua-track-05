@@ -3,10 +3,11 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import dotenv from "dotenv";
+import { nanoid } from "nanoid";
 
 dotenv.config();
 
-const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;
+const { JWT_SECRET, JWT_EXPIRES_IN, JWT_EXPIRES_IN_TEMP } = process.env;
 
 const userSchema = new Schema(
   {
@@ -33,6 +34,14 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+
+    verificationToken: {
+      type: String,
+    },
   },
   {
     versionKey: false,
@@ -57,6 +66,18 @@ userSchema.methods.createToken = function () {
   this.token = jwt.sign({ id: this._id }, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
   });
+};
+
+// eslint-disable-next-line func-names
+userSchema.methods.createTempToken = function () {
+  this.token = jwt.sign({ id: this._id }, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN_TEMP,
+  });
+};
+
+// eslint-disable-next-line func-names
+userSchema.methods.createVerificationToken = function () {
+  this.verificationToken = nanoid();
 };
 
 // eslint-disable-next-line func-names

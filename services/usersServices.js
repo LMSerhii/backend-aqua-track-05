@@ -8,7 +8,8 @@ export const createUserService = async (userData) => {
 
   await newUser.hashPassword();
   await newUser.createAvatar();
-  await newUser.createToken();
+  await newUser.createTempToken();
+  await newUser.createVerificationToken();
   await newUser.save();
 
   return newUser;
