@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 
 import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/usersRouter.js";
+import waterRouter from "./routes/waterRouter.js";
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ const { PORT, MONGODB_URL } = process.env;
 
 const app = express();
 
-app.use(morgan("tiny"));
+app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
@@ -23,13 +24,14 @@ const pathPrefix = "/api/v1";
 
 app.use(`${pathPrefix}/users`, authRouter);
 app.use(`${pathPrefix}/contacts`, contactsRouter);
+app.use(`${pathPrefix}/water`, waterRouter);
 
 // Error handles
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   const { status = 500, message = "Server error" } = err;
   res.status(status).json({ message });
 });
