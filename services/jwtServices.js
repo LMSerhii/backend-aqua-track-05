@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
-
-const { JWT_SECRET_TEMP, JWT_REFRESH_SECRET } = process.env;
+import { JWT_REFRESH_SECRET, JWT_SECRET_TEMP } from "../index.js";
 
 export const generateTokens = (payload) => {
   const token = jwt.sign(payload, JWT_SECRET_TEMP, { expiresIn: "15m" });
@@ -9,3 +8,9 @@ export const generateTokens = (payload) => {
   });
   return { token, refreshToken };
 };
+
+export const verifyToken = (refreshToken) =>
+  jwt.verify(refreshToken, JWT_SECRET_TEMP);
+
+export const verifyRefreshToken = (refreshToken) =>
+  jwt.verify(refreshToken, JWT_REFRESH_SECRET);

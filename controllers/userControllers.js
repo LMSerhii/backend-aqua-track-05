@@ -12,7 +12,7 @@ export const signup = (req, res) => {
 };
 
 export const login = (req, res) => {
-  const { name, email, token, refreshToken } = req.user;
+  const { name, email, token, refreshToken, avatar } = req.user;
 
   res.json({
     token,
@@ -20,6 +20,7 @@ export const login = (req, res) => {
     user: {
       name,
       email,
+      avatar,
     },
   });
 };

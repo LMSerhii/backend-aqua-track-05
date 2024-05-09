@@ -1,8 +1,8 @@
-import { User } from "../models/userModel.js";
 import { getContactById } from "../services/contactsServices.js";
 import { sendEmail } from "../services/emailServices.js";
 import {
   findUserByEmailService,
+  findUserByRefreshToken,
   findUserByVerificationToken,
   updateVerify,
   verifyUserToken,
@@ -36,8 +36,9 @@ export const verifyByEmailMiddleware = catchAsync(async (req, res, next) => {
 
   await updateVerify(user._id);
 
-  await user.createToken();
-  await user.save();
+  // await user.createToken();
+  // await user.createRefreshToken();
+  // await user.save();
 
   next();
 });
@@ -89,7 +90,7 @@ export const verifyRefreshTokenMiddleware = catchAsync(
   async (req, res, next) => {
     const { refreshToken } = req.body;
 
-    const isExist = await User.findOne({ refreshToken });
+    const isExist = await findUserByRefreshToken(refreshToken);
 
     if (!isExist) {
       throw HttpError(403, "Token inactive");

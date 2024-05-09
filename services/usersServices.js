@@ -1,8 +1,9 @@
-import jwt from "jsonwebtoken";
-import { generateTokens } from "./jwtServices.js";
+import {
+  generateTokens,
+  verifyRefreshToken,
+  verifyToken,
+} from "./jwtServices.js";
 import { User } from "../models/userModel.js";
-
-const { JWT_SECRET_TEMP, JWT_REFRESH_SECRET } = process.env;
 
 export const createUserService = async (userData) => {
   const newUser = await User(userData);
@@ -18,6 +19,9 @@ export const createUserService = async (userData) => {
 export const findUserByVerificationToken = (verificationToken) =>
   User.findOne({ verificationToken });
 
+export const findUserByRefreshToken = (refreshToken) =>
+  User.findOne({ refreshToken });
+
 export const updateVerify = (id) =>
   User.findByIdAndUpdate(id, { verify: true, verificationToken: null });
 
@@ -29,7 +33,7 @@ export const removeTokenService = (id) =>
   User.findByIdAndUpdate(id, { token: "", refreshToken: "" });
 
 export const verifyUserToken = async (token) => {
-  const { id } = jwt.verify(token, JWT_SECRET_TEMP);
+  const { id } = verifyToken(token);
 
   const user = await findUserByID(id);
 
@@ -40,10 +44,9 @@ export const updatingAvatar = (id, avatar) =>
   User.findByIdAndUpdate(id, { avatar }, { new: true });
 
 export const refreshTokenService = async (refreshToken) => {
-  const { id } = jwt.verify(refreshToken, JWT_REFRESH_SECRET);
-  const newTokens = generateTokens({
-    id,
-  });
+  const { id } = verifyRefreshToken(refreshToken);
+
+  const newTokens = generateTokens({ id });
 
   const updatedUser = await User.findByIdAndUpdate(
     id,

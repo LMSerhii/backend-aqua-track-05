@@ -56,7 +56,7 @@ authRouter.post(
 );
 
 authRouter.post(
-  "/login",
+  "/signin",
   validateBody(loginUserSchema),
   loginUserMiddleware,
   login
@@ -64,7 +64,12 @@ authRouter.post(
 
 authRouter.post("/logout", auth, logoutUserMiddleware, logout);
 
-authRouter.post("/refresh", validateBody(refreshSchema),verifyRefreshTokenMiddleware, refresh);
+authRouter.post(
+  "/refresh",
+  validateBody(refreshSchema),
+  verifyRefreshTokenMiddleware,
+  refresh
+);
 
 authRouter.get("/current", auth, current);
 

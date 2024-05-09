@@ -1,15 +1,11 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/usersRouter.js";
-
-dotenv.config();
-
-const { PORT, MONGODB_URL } = process.env;
+import { MONGODB_URL, PORT } from "./index.js";
 
 const app = express();
 

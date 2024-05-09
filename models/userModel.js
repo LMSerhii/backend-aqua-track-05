@@ -2,12 +2,13 @@ import { model, Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import dotenv from "dotenv";
 import { nanoid } from "nanoid";
-
-dotenv.config();
-
-const { JWT_SECRET_TEMP, JWT_EXPIRES_IN_TEMP, JWT_REFRESH_SECRET, JWT_REFRESH_EXPIRES_IN } = process.env;
+import {
+  JWT_EXPIRES_IN_TEMP,
+  JWT_REFRESH_EXPIRES_IN,
+  JWT_REFRESH_SECRET,
+  JWT_SECRET_TEMP,
+} from "../index.js";
 
 const userSchema = new Schema(
   {

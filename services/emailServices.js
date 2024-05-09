@@ -1,9 +1,5 @@
 import nodemailer from "nodemailer";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const { BASE_URL, PORT, MAIL_NAME, MAIL_PSW } = process.env;
+import { BASE_URL, MAIL_NAME, MAIL_PSW, PORT } from "../index.js";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.ukr.net",
