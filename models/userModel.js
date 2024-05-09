@@ -7,7 +7,7 @@ import { nanoid } from "nanoid";
 
 dotenv.config();
 
-const { JWT_SECRET, JWT_EXPIRES_IN, JWT_EXPIRES_IN_TEMP } = process.env;
+const { JWT_SECRET_TEMP, JWT_EXPIRES_IN_TEMP, JWT_REFRESH_SECRET, JWT_REFRESH_EXPIRES_IN } = process.env;
 
 const userSchema = new Schema(
   {
@@ -26,6 +26,11 @@ const userSchema = new Schema(
     },
 
     token: {
+      type: String,
+      default: "",
+    },
+
+    refreshToken: {
       type: String,
       default: "",
     },
@@ -63,15 +68,15 @@ userSchema.methods.createAvatar = function () {
 
 // eslint-disable-next-line func-names
 userSchema.methods.createToken = function () {
-  this.token = jwt.sign({ id: this._id }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
+  this.token = jwt.sign({ id: this._id }, JWT_SECRET_TEMP, {
+    expiresIn: JWT_EXPIRES_IN_TEMP,
   });
 };
 
 // eslint-disable-next-line func-names
-userSchema.methods.createTempToken = function () {
-  this.token = jwt.sign({ id: this._id }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN_TEMP,
+userSchema.methods.createRefreshToken = function () {
+  this.refreshToken = jwt.sign({ id: this._id }, JWT_REFRESH_SECRET, {
+    expiresIn: JWT_REFRESH_EXPIRES_IN,
   });
 };
 

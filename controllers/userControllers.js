@@ -1,8 +1,9 @@
+import { refreshTokenService } from "../services/usersServices.js";
+
 export const signup = (req, res) => {
-  const { name, email, token } = req.user;
+  const { name, email } = req.user;
 
   res.status(201).json({
-    token,
     user: {
       name,
       email,
@@ -11,15 +12,25 @@ export const signup = (req, res) => {
 };
 
 export const login = (req, res) => {
-  const { name, email, token } = req.user;
+  const { name, email, token, refreshToken } = req.user;
 
   res.json({
     token,
+    refreshToken,
     user: {
       name,
       email,
     },
   });
+};
+
+export const refresh = async (req, res) => {
+  const { refreshToken } = req.body;
+
+  const { token, refreshToken: newRefreshToken } = await refreshTokenService(
+    refreshToken
+  );
+  res.json({ token, refreshToken: newRefreshToken });
 };
 
 export const logout = (req, res) => {

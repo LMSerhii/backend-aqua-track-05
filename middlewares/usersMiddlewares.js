@@ -37,6 +37,7 @@ export const loginUserMiddleware = catchAsync(async (req, res, next) => {
   if (!isCompare) throw HttpError(401, "Email or password is wrong");
 
   await user.createToken();
+  await user.createRefreshToken();
   await user.save();
 
   req.user = user;

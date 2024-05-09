@@ -3,6 +3,7 @@ import {
   current,
   login,
   logout,
+  refresh,
   resendVerifyController,
   signup,
   updateAvatarController,
@@ -12,6 +13,7 @@ import validateBody from "../utils/validateBody.js";
 import {
   emailUserSchema,
   loginUserSchema,
+  refreshSchema,
   sigupUserSchema,
 } from "../schemas/usersSchemas.js";
 import {
@@ -25,6 +27,7 @@ import {
   resendVerifyEmailMiddleware,
   sendVerifyEmail,
   verifyByEmailMiddleware,
+  verifyRefreshTokenMiddleware,
 } from "../middlewares/authMiddlewares.js";
 import { upload } from "../middlewares/uploadMiddleware.js";
 
@@ -60,6 +63,8 @@ authRouter.post(
 );
 
 authRouter.post("/logout", auth, logoutUserMiddleware, logout);
+
+authRouter.post("/refresh", validateBody(refreshSchema),verifyRefreshTokenMiddleware, refresh);
 
 authRouter.get("/current", auth, current);
 
