@@ -34,3 +34,7 @@ export const updateAvatarSchema = Joi.object({
     .required()
     .error(new Error("Avatar is a required field")),
 });
+
+export const refreshSchema = Joi.object({
+  refreshToken: Joi.string().required(),
+});

@@ -1,3 +1,4 @@
+import { User } from "../models/userModel.js";
 import { getContactById } from "../services/contactsServices.js";
 import { sendEmail } from "../services/emailServices.js";
 import {
@@ -83,3 +84,17 @@ export const verifyOwner = catchAsync(async (req, res, next) => {
 
   next();
 });
+
+export const verifyRefreshTokenMiddleware = catchAsync(
+  async (req, res, next) => {
+    const { refreshToken } = req.body;
+
+    const isExist = await User.findOne({ refreshToken });
+
+    if (!isExist) {
+      throw HttpError(403, "Token inactive");
+    }
+
+    next();
+  }
+);
