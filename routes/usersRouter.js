@@ -7,6 +7,7 @@ import {
   resendVerifyController,
   signup,
   updateAvatarController,
+  updateUser,
   verifyByEmailController,
 } from "../controllers/userControllers.js";
 import validateBody from "../utils/validateBody.js";
@@ -17,10 +18,12 @@ import {
   sigupUserSchema,
 } from "../schemas/usersSchemas.js";
 import {
+  isValidId,
   loginUserMiddleware,
   logoutUserMiddleware,
   signUpUserMiddleware,
   updateAvatarMiddleware,
+  validateUpdateUser,
 } from "../middlewares/usersMiddlewares.js";
 import {
   auth,
@@ -79,6 +82,14 @@ authRouter.patch(
   upload.single("avatar"),
   updateAvatarMiddleware,
   updateAvatarController
+);
+
+authRouter.put(
+  "/:id",
+  isValidId,
+  auth,
+  validateUpdateUser,
+  updateUser
 );
 
 export default authRouter;
