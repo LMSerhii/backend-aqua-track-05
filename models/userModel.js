@@ -16,6 +16,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+
     email: {
       type: String,
       required: true,
@@ -36,10 +37,6 @@ const userSchema = new Schema(
       default: "",
     },
 
-    avatar: {
-      type: String,
-      required: true,
-    },
     verify: {
       type: Boolean,
       default: false,
@@ -47,6 +44,32 @@ const userSchema = new Schema(
 
     verificationToken: {
       type: String,
+    },
+
+    avatar: {
+      type: String,
+      required: true,
+    },
+
+    gender: {
+      type: String,
+      enum: ["woman", "man", null],
+      default: null,
+    },
+
+    weight: {
+      type: Number,
+      default: null,
+    },
+
+    sportTime: {
+      type: Number,
+      default: null,
+    },
+
+    dailyWater: {
+      type: Number,
+      default: null,
     },
   },
   {

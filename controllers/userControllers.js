@@ -1,4 +1,5 @@
-import { refreshTokenService } from "../services/usersServices.js";
+import { refreshTokenService, upgradeUser } from "../services/usersServices.js";
+import { catchAsync } from "../utils/catchAsync.js";
 
 export const signup = (req, res) => {
   const { name, email } = req.user;
@@ -39,9 +40,10 @@ export const logout = (req, res) => {
 };
 
 export const current = (req, res) => {
-  const { name, email } = req.user;
+  const { name, email, avatar, gender, weight, sportTime, dailyWater } =
+    req.user;
 
-  res.json({ name, email });
+  res.json({ name, email, avatar, gender, weight, sportTime, dailyWater });
 };
 
 export const verifyByEmailController = (req, res) => {
@@ -57,3 +59,11 @@ export const updateAvatarController = (req, res) => {
 
   res.json({ avatar });
 };
+
+export const updateUser = catchAsync(async (req, res) => {
+  const { _id: id } = req.user;
+
+  const user = await upgradeUser(id, req.body);
+
+  res.json(user);
+});

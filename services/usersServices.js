@@ -56,3 +56,6 @@ export const refreshTokenService = async (refreshToken) => {
 
   return updatedUser;
 };
+
+export const upgradeUser = (id, body) =>
+  User.findByIdAndUpdate(id, body, { new: true });
