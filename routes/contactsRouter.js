@@ -18,7 +18,7 @@ import { auth, verifyOwner } from "../middlewares/authMiddlewares.js";
 
 const contactsRouter = express.Router();
 
-contactsRouter.get("/", auth, getAllContacts);
+contactsRouter.put("/", auth, getAllContacts);
 
 contactsRouter.post("/", auth, validateCreateContact, createContact);
 
