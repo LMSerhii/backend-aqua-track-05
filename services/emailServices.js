@@ -35,3 +35,14 @@ export const sendEmail = async (name, email, verificationToken) => {
 
   console.log("email sent");
 };
+
+export const sendForgotTokenByEmail = async (email, verificationToken) => {
+  await transporter.sendMail({
+    from: MAIL_NAME,
+    to: email,
+    subject: "Reset password link",
+    html: `<a target="_blank" href="${BASE_URL}:${PORT}/api/v1/users/reset-password/${verificationToken}">Click verify email</a>`,
+  });
+
+  console.log("Reset password link sent");
+};

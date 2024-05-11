@@ -1,4 +1,5 @@
 import path from "path";
+import crypto from "crypto";
 import { isValidObjectId } from "mongoose";
 
 import {
@@ -10,6 +11,7 @@ import {
 import HttpError from "../utils/HttpError.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { removeImage, updateImage } from "../services/fileServices.js";
+import { User } from "../models/userModel.js";
 
 export const signUpUserMiddleware = catchAsync(async (req, res, next) => {
   const { email } = req.body;
@@ -88,6 +90,25 @@ export const isValidId = (req, res, next) => {
   const { id } = req.params;
 
   if (!isValidObjectId(id)) next(HttpError(400, `${id} is not valid id`));
+
+  next();
+};
+
+export const resetMiddleware = async (req, res, next) => {
+  const { otp } = req.params;
+
+  const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+  const user = await User.findOne({
+    passwordResetToken: otpHash,
+    passwordResetTokenExp: { $gt: Date.now() },
+  });
+
+  if(!user) {
+    throw HttpError(500, "The token has expired");
+  }
+
+  req.user = user;
 
   next();
 };
