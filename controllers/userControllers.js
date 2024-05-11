@@ -1,4 +1,9 @@
-import { refreshTokenService, upgradeUser } from "../services/usersServices.js";
+import { User } from "../models/userModel.js";
+import {
+  refreshTokenService,
+  resetPasswordService,
+  upgradeUser,
+} from "../services/usersServices.js";
 import { catchAsync } from "../utils/catchAsync.js";
 
 export const signup = (req, res) => {
@@ -66,4 +71,21 @@ export const updateUser = catchAsync(async (req, res) => {
   const user = await upgradeUser(id, req.body);
 
   res.json(user);
+});
+
+export const allUsers = catchAsync(async (req, res) => {
+  const usersCount = await User.countDocuments();
+
+  res.json({ allUsers: usersCount });
+});
+
+export const forgotPassword = catchAsync((req, res) => {
+  res.status(200).json({ msg: "Password reset instructions sent by email" });
+});
+
+export const resetPassword = catchAsync(async (req, res) => {
+  const { _id: id } = req.user;
+  await resetPasswordService(req.params.otp, req.body.password, id);
+
+  res.status(200).json({ msg: "Password has been updated" });
 });

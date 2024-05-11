@@ -38,3 +38,10 @@ export const updateAvatarSchema = Joi.object({
 export const refreshSchema = Joi.object({
   refreshToken: Joi.string().required(),
 });
+
+export const passwordUserSchema = Joi.object({
+  password: Joi.string()
+    .regex(PASSWD_REGEX)
+    .required()
+    .error(new Error(errorPswMessage)),
+});

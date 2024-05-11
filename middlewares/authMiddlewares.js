@@ -1,5 +1,5 @@
 import { getContactById } from "../services/contactsServices.js";
-import { sendEmail } from "../services/emailServices.js";
+import { sendEmail, sendForgotTokenByEmail } from "../services/emailServices.js";
 import {
   findUserByEmailService,
   findUserByRefreshToken,
@@ -47,6 +47,22 @@ export const sendVerifyEmail = catchAsync(async (req, res, next) => {
   const { email, verificationToken } = req.user;
 
   await sendEmail(email, verificationToken);
+  next();
+});
+
+export const sendResettoken = catchAsync(async (req, res, next) => {
+  const user = await findUserByEmailService(req.body.email);
+
+  if (!user) {
+    return res
+      .status(200)
+      .json({ msg: "Password reset instructions sent by email" });
+  }
+
+  const otp = user.createPasswordResetToken();
+
+  await sendForgotTokenByEmail(req.body.email, otp);
+  await user.save();
   next();
 });
 

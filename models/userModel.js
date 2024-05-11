@@ -71,6 +71,10 @@ const userSchema = new Schema(
       type: Number,
       default: null,
     },
+
+    passwordResetToken: String,
+
+    passwordResetTokenExp: Date,
   },
   {
     versionKey: false,
@@ -115,5 +119,15 @@ userSchema.methods.comparePassword = async function (password) {
 
   return isCompare;
 };
+
+// eslint-disable-next-line func-names
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.passwordResetTokenExp = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
+}
 
 export const User = model("user", userSchema);

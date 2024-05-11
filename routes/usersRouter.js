@@ -1,10 +1,13 @@
 import express from "express";
 import {
+  allUsers,
   current,
+  forgotPassword,
   login,
   logout,
   refresh,
   resendVerifyController,
+  resetPassword,
   signup,
   updateAvatarController,
   updateUser,
@@ -14,6 +17,7 @@ import validateBody from "../utils/validateBody.js";
 import {
   emailUserSchema,
   loginUserSchema,
+  passwordUserSchema,
   refreshSchema,
   sigupUserSchema,
 } from "../schemas/usersSchemas.js";
@@ -21,6 +25,7 @@ import {
   isValidId,
   loginUserMiddleware,
   logoutUserMiddleware,
+  resetMiddleware,
   signUpUserMiddleware,
   updateAvatarMiddleware,
   validateUpdateUser,
@@ -28,6 +33,7 @@ import {
 import {
   auth,
   resendVerifyEmailMiddleware,
+  sendResettoken,
   sendVerifyEmail,
   verifyByEmailMiddleware,
   verifyRefreshTokenMiddleware,
@@ -68,6 +74,20 @@ authRouter.post(
 authRouter.post("/logout", auth, logoutUserMiddleware, logout);
 
 authRouter.post(
+  "/forgot-password",
+  validateBody(emailUserSchema),
+  sendResettoken,
+  forgotPassword
+);
+
+authRouter.post(
+  "/reset-password/:otp",
+  validateBody(passwordUserSchema),
+  resetMiddleware,
+  resetPassword
+);
+
+authRouter.post(
   "/refresh",
   validateBody(refreshSchema),
   verifyRefreshTokenMiddleware,
@@ -75,6 +95,8 @@ authRouter.post(
 );
 
 authRouter.get("/current", auth, current);
+
+authRouter.get("/all", allUsers);
 
 authRouter.patch(
   "/avatars",
@@ -84,12 +106,6 @@ authRouter.patch(
   updateAvatarController
 );
 
-authRouter.put(
-  "/:id",
-  isValidId,
-  auth,
-  validateUpdateUser,
-  updateUser
-);
+authRouter.put("/:id", isValidId, auth, validateUpdateUser, updateUser);
 
 export default authRouter;
