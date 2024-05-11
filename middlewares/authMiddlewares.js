@@ -76,12 +76,10 @@ export const resendVerifyEmailMiddleware = catchAsync(
 
     const user = await findUserByEmailService(email);
 
-    if (!user) {
-      throw HttpError(404, "User not found");
-    }
+    if (!user) return next(HttpError(404, "User not found"));
 
     if (user.verify) {
-      throw HttpError(400, "Verification has already been passed");
+      return next(HttpError(400, "Verification has already been passed"));
     }
 
     req.user = user;
@@ -112,9 +110,7 @@ export const verifyRefreshTokenMiddleware = catchAsync(
 
     const isExist = await findUserByRefreshToken(refreshToken);
 
-    if (!isExist) {
-      throw HttpError(403, "Token inactive");
-    }
+    if (!isExist) return next(HttpError(403, "Token inactive"));
 
     next();
   }
