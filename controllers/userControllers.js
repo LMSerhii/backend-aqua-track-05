@@ -80,12 +80,13 @@ export const allUsers = catchAsync(async (req, res) => {
   res.json({ allUsers: usersCount });
 });
 
-export const forgotPassword = catchAsync((req, res) => {
+export const forgotPassword = (req, res) => {
   res.status(200).json({ msg: "Password reset instructions sent by email" });
-});
+};
 
 export const resetPassword = catchAsync(async (req, res) => {
   const { _id: id } = req.user;
+
   await resetPasswordService(req.params.otp, req.body.password, id);
 
   res.status(200).json({ msg: "Password has been updated" });
