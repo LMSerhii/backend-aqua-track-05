@@ -104,7 +104,9 @@ export const resetMiddleware = async (req, res, next) => {
     passwordResetTokenExp: { $gt: Date.now() },
   });
 
-  if(!user) throw HttpError(500, "The token has expired");
+  if(!user) {
+    throw HttpError(500, "The token has expired");
+  }
 
   req.user = user;
 
