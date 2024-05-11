@@ -12,4 +12,5 @@ export const {
   BASE_URL,
   MAIL_NAME,
   MAIL_PSW,
+  FRONTEND_URL,
 } = process.env;

@@ -44,9 +44,9 @@ export const verifyByEmailMiddleware = catchAsync(async (req, res, next) => {
 });
 
 export const sendVerifyEmail = catchAsync(async (req, res, next) => {
-  const { email, verificationToken } = req.user;
+  const { name, email, verificationToken } = req.user;
 
-  await sendEmail(email, verificationToken);
+  await sendEmail(name, email, verificationToken);
   next();
 });
 

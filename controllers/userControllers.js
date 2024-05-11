@@ -4,6 +4,7 @@ import {
   resetPasswordService,
   upgradeUser,
 } from "../services/usersServices.js";
+import { FRONTEND_URL } from "../index.js";
 import { catchAsync } from "../utils/catchAsync.js";
 
 export const signup = (req, res) => {
@@ -52,7 +53,7 @@ export const current = (req, res) => {
 };
 
 export const verifyByEmailController = (req, res) => {
-  res.json({ message: "Verification successful" });
+  res.redirect(`${FRONTEND_URL}/signin`);
 };
 
 export const resendVerifyController = (req, res) => {
