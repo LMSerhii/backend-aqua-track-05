@@ -3,6 +3,8 @@ import {
   allUsers,
   current,
   forgotPassword,
+  googleAuth,
+  googleRedirect,
   login,
   logout,
   refresh,
@@ -105,6 +107,10 @@ authRouter.patch(
   updateAvatarMiddleware,
   updateAvatarController
 );
+
+authRouter.get("/google", googleAuth);
+
+authRouter.get("/google-redirect", googleRedirect);
 
 authRouter.put("/:id", isValidId, auth, validateUpdateUser, updateUser);
 

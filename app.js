@@ -6,9 +6,9 @@ import mongoose from "mongoose";
 import { fileURLToPath } from "url";
 
 import contactsRouter from "./routes/contactsRouter.js";
-import authRouter from "./routes/usersRouter.js";
 import waterRouter from "./routes/waterRouter.js";
 import { MONGODB_URL, PORT } from "./index.js";
+import authRouter from "./routes/usersRouter.js";
 
 const app = express();
 
