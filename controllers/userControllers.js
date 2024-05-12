@@ -8,12 +8,17 @@ import {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
 } from "../index.js";
+import { User } from "../models/userModel.js";
+import {
+  refreshTokenService,
+  resetPasswordService,
+  upgradeUser,
+} from "../services/usersServices.js";
 
 export const signup = (req, res) => {
-  const { name, email, token } = req.user;
+  const { name, email } = req.user;
 
   res.status(201).json({
-    token,
     user: {
       name,
       email,
@@ -22,15 +27,26 @@ export const signup = (req, res) => {
 };
 
 export const login = (req, res) => {
-  const { name, email, token } = req.user;
+  const { name, email, token, refreshToken, avatar } = req.user;
 
   res.json({
     token,
+    refreshToken,
     user: {
       name,
       email,
+      avatar,
     },
   });
+};
+
+export const refresh = async (req, res) => {
+  const { refreshToken } = req.body;
+
+  const { token, refreshToken: newRefreshToken } = await refreshTokenService(
+    refreshToken
+  );
+  res.json({ token, refreshToken: newRefreshToken });
 };
 
 export const logout = (req, res) => {
@@ -38,13 +54,14 @@ export const logout = (req, res) => {
 };
 
 export const current = (req, res) => {
-  const { name, email } = req.user;
+  const { name, email, avatar, gender, weight, sportTime, dailyWater } =
+    req.user;
 
-  res.json({ name, email });
+  res.json({ name, email, avatar, gender, weight, sportTime, dailyWater });
 };
 
 export const verifyByEmailController = (req, res) => {
-  res.json({ message: "Verification successful" });
+  res.redirect(`${FRONTEND_URL}/signin`);
 };
 
 export const resendVerifyController = (req, res) => {
@@ -102,4 +119,30 @@ export const googleRedirect = catchAsync(async (req, res) => {
   });
 
   return res.redirect(`${FRONTEND_URL}?email=${userData.data.email}`);
+});
+
+export const updateUser = catchAsync(async (req, res) => {
+  const { _id: id } = req.user;
+
+  const user = await upgradeUser(id, req.body);
+
+  res.json(user);
+});
+
+export const allUsers = catchAsync(async (req, res) => {
+  const usersCount = await User.countDocuments();
+
+  res.json({ allUsers: usersCount });
+});
+
+export const forgotPassword = (req, res) => {
+  res.status(200).json({ msg: "Password reset instructions sent by email" });
+};
+
+export const resetPassword = catchAsync(async (req, res) => {
+  const { _id: id } = req.user;
+
+  await resetPasswordService(req.params.otp, req.body.password, id);
+
+  res.status(200).json({ msg: "Password has been updated" });
 });

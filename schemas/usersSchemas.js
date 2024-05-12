@@ -34,3 +34,14 @@ export const updateAvatarSchema = Joi.object({
     .required()
     .error(new Error("Avatar is a required field")),
 });
+
+export const refreshSchema = Joi.object({
+  refreshToken: Joi.string().required(),
+});
+
+export const passwordUserSchema = Joi.object({
+  password: Joi.string()
+    .regex(PASSWD_REGEX)
+    .required()
+    .error(new Error(errorPswMessage)),
+});

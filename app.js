@@ -1,19 +1,16 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/usersRouter.js";
-
-dotenv.config();
-
-const { PORT, MONGODB_URL } = process.env;
+import waterRouter from "./routes/waterRouter.js";
+import { MONGODB_URL, PORT } from "./index.js";
 
 const app = express();
 
-app.use(morgan("tiny"));
+app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
@@ -23,6 +20,7 @@ const pathPrefix = "/api/v1";
 
 app.use(`${pathPrefix}/users`, authRouter);
 app.use(`${pathPrefix}/contacts`, contactsRouter);
+app.use(`${pathPrefix}/water`, waterRouter);
 
 // Error handles
 app.use((_, res) => {

@@ -2,12 +2,13 @@ import { model, Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import dotenv from "dotenv";
 import { nanoid } from "nanoid";
-
-dotenv.config();
-
-const { JWT_SECRET, JWT_EXPIRES_IN, JWT_EXPIRES_IN_TEMP } = process.env;
+import {
+  JWT_EXPIRES_IN_TEMP,
+  JWT_REFRESH_EXPIRES_IN,
+  JWT_REFRESH_SECRET,
+  JWT_SECRET_TEMP,
+} from "../index.js";
 
 const userSchema = new Schema(
   {
@@ -15,6 +16,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+
     email: {
       type: String,
       required: true,
@@ -30,10 +32,11 @@ const userSchema = new Schema(
       default: "",
     },
 
-    avatar: {
+    refreshToken: {
       type: String,
-      required: true,
+      default: "",
     },
+
     verify: {
       type: Boolean,
       default: false,
@@ -42,6 +45,36 @@ const userSchema = new Schema(
     verificationToken: {
       type: String,
     },
+
+    avatar: {
+      type: String,
+      required: true,
+    },
+
+    gender: {
+      type: String,
+      enum: ["woman", "man", null],
+      default: null,
+    },
+
+    weight: {
+      type: Number,
+      default: null,
+    },
+
+    sportTime: {
+      type: Number,
+      default: null,
+    },
+
+    dailyWater: {
+      type: Number,
+      default: null,
+    },
+
+    passwordResetToken: String,
+
+    passwordResetTokenExp: Date,
   },
   {
     versionKey: false,
@@ -63,15 +96,15 @@ userSchema.methods.createAvatar = function () {
 
 // eslint-disable-next-line func-names
 userSchema.methods.createToken = function () {
-  this.token = jwt.sign({ id: this._id }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
+  this.token = jwt.sign({ id: this._id }, JWT_SECRET_TEMP, {
+    expiresIn: JWT_EXPIRES_IN_TEMP,
   });
 };
 
 // eslint-disable-next-line func-names
-userSchema.methods.createTempToken = function () {
-  this.token = jwt.sign({ id: this._id }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN_TEMP,
+userSchema.methods.createRefreshToken = function () {
+  this.refreshToken = jwt.sign({ id: this._id }, JWT_REFRESH_SECRET, {
+    expiresIn: JWT_REFRESH_EXPIRES_IN,
   });
 };
 
@@ -86,5 +119,15 @@ userSchema.methods.comparePassword = async function (password) {
 
   return isCompare;
 };
+
+// eslint-disable-next-line func-names
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.passwordResetTokenExp = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
+}
 
 export const User = model("user", userSchema);

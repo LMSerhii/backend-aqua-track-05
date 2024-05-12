@@ -1,0 +1,23 @@
+Hi [name], Thanks for getting started with our [customer portal]! We need a
+little more information to complete your registration, including a confirmation
+of your email address. Click below to confirm your email address: [link] If you
+have problems, please paste the above URL into your web browser.
+
+<p>Hi ${name},</p>
+<p>Thanks for getting started with our <b>Aqua Track!</b></p>
+<p>
+  We need a little more information to complete your registration, including a
+  confirmation of your email address.
+</p>
+<p>Click below to confirm your email address:</p>
+<a
+  target="_blank"
+  href="${BASE_URL}:${PORT}/api/v1/users/verify/${verificationToken}"
+  >Click verify email</a
+>
+<a
+  target="_blank"
+  href="${BASE_URL}:${PORT}/api/v1/users/verify/${verificationToken}"
+  >${BASE_URL}:${PORT}/api/v1/users/verify/${verificationToken}</a
+>
+<p>If you have problems, please paste the above URL into your web browser.</p>

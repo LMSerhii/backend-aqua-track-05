@@ -1,4 +1,6 @@
 import path from "path";
+import crypto from "crypto";
+import { isValidObjectId } from "mongoose";
 
 import {
   createUserService,
@@ -9,6 +11,7 @@ import {
 import HttpError from "../utils/HttpError.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { removeImage, updateImage } from "../services/fileServices.js";
+import { User } from "../models/userModel.js";
 
 export const signUpUserMiddleware = catchAsync(async (req, res, next) => {
   const { email } = req.body;
@@ -37,6 +40,7 @@ export const loginUserMiddleware = catchAsync(async (req, res, next) => {
   if (!isCompare) throw HttpError(401, "Email or password is wrong");
 
   await user.createToken();
+  await user.createRefreshToken();
   await user.save();
 
   req.user = user;
@@ -73,3 +77,36 @@ export const updateAvatarMiddleware = catchAsync(async (req, res, next) => {
   req.user = user;
   next();
 });
+
+export const validateUpdateUser = (req, res, next) => {
+  if (Object.keys(req.body).length === 0) {
+    next(HttpError(400, "Body must have at least one field"));
+    return;
+  }
+  next();
+};
+
+export const isValidId = (req, res, next) => {
+  const { id } = req.params;
+
+  if (!isValidObjectId(id)) next(HttpError(400, `${id} is not valid id`));
+
+  next();
+};
+
+export const resetMiddleware = async (req, res, next) => {
+  const { otp } = req.params;
+
+  const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+  const user = await User.findOne({
+    passwordResetToken: otpHash,
+    passwordResetTokenExp: { $gt: Date.now() },
+  });
+
+  if (!user) return next(HttpError(500, "The token has expired"));
+
+  req.user = user;
+
+  next();
+};
