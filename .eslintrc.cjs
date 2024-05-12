@@ -68,8 +68,8 @@ module.exports = {
       {
         ignoreRegExpLiterals: true,
         ignoreUrls: true,
-        comments: 130,
-        code: 130,
+        comments: 140,
+        code: 140,
       },
     ],
     "no-magic-numbers": ["off", { ignoreArrayIndexes: true }],
