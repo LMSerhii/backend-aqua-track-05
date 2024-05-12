@@ -3,6 +3,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const {
+<<<<<<< HEAD
+  BASE_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+=======
   PORT,
   MONGODB_URL,
   JWT_SECRET_TEMP,
@@ -12,5 +17,6 @@ export const {
   BASE_URL,
   MAIL_NAME,
   MAIL_PSW,
+>>>>>>> main
   FRONTEND_URL,
 } = process.env;
