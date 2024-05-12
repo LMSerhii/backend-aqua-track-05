@@ -1,6 +1,8 @@
 import express from "express";
 import {
   current,
+  googleAuth,
+  googleRedirect,
   login,
   logout,
   resendVerifyController,
@@ -70,5 +72,9 @@ authRouter.patch(
   updateAvatarMiddleware,
   updateAvatarController
 );
+
+authRouter.get("/google", googleAuth);
+
+authRouter.get("/google-redirect", googleRedirect);
 
 export default authRouter;
