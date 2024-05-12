@@ -4,11 +4,13 @@ import cors from "cors";
 import path, { dirname } from "path";
 import mongoose from "mongoose";
 import { fileURLToPath } from "url";
+import path from "path";
 
 import contactsRouter from "./routes/contactsRouter.js";
 import waterRouter from "./routes/waterRouter.js";
 import { MONGODB_URL, PORT } from "./index.js";
 import authRouter from "./routes/usersRouter.js";
+import googleAuthRouter from "./routes/googleAuthRouter.js";
 
 const app = express();
 
@@ -37,6 +39,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //
 
+app.use(`${pathPrefix}/link`, (req, res) =>
+  res.sendFile(path.join(process.cwd(), "./public/link.html"))
+);
+
+app.use(`${pathPrefix}/auth`, googleAuthRouter);
 app.use(`${pathPrefix}/users`, authRouter);
 app.use(`${pathPrefix}/contacts`, contactsRouter);
 app.use(`${pathPrefix}/water`, waterRouter);
