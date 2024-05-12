@@ -2,12 +2,9 @@ import express from "express";
 import {
   allUsers,
   current,
-<<<<<<< HEAD
+  forgotPassword,
   googleAuth,
   googleRedirect,
-=======
-  forgotPassword,
->>>>>>> main
   login,
   logout,
   refresh,
@@ -111,12 +108,10 @@ authRouter.patch(
   updateAvatarController
 );
 
-<<<<<<< HEAD
 authRouter.get("/google", googleAuth);
 
 authRouter.get("/google-redirect", googleRedirect);
-=======
+
 authRouter.put("/:id", isValidId, auth, validateUpdateUser, updateUser);
->>>>>>> main
 
 export default authRouter;
