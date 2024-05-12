@@ -42,7 +42,7 @@ export const sendForgotTokenByEmail = async (email, verificationToken) => {
     to: email,
     subject: "Reset password link",
     // html: `<a target="_blank" href="${BASE_URL}:${PORT}/api/v1/users/reset-password/${verificationToken}">Click verify email</a>`,
-    html: `<a target="_blank" href="${BASE_URL}:${PORT}/api/v1/users/reset-password-form/${verificationToken}">Click verify email</a>`,
+    html: `<a target="_blank" href="${BASE_URL}:8000/reset-password-form/${verificationToken}">Click verify email</a>`,
   });
 
   console.log("Reset password link sent");
