@@ -1,9 +1,13 @@
-import { addWaterAmountService } from "../services/waterServices.js";
+import {
+  addWaterAmountService,
+  countTotalAmountByDateService,
+  deleteWaterAmountService,
+  getWaterRecordsByUserAndMonth,
+  updateWaterAmountByIdService,
+} from "../services/waterServices.js";
 
-import { Water } from "../models/waterModel.js";
-import { User } from "../models/userModel.js";
-
-export const addWaterAmountController = async (req, res) => {
+// * Додавання запису про спожиту воду *
+export const addWaterAmount = async (req, res) => {
   try {
     const result = await addWaterAmountService(req.user._id, req.body);
     return res.status(result.statusCode).json(result);
@@ -12,58 +16,83 @@ export const addWaterAmountController = async (req, res) => {
     return res.status(500).json({ success: false, error: "Помилка сервера" });
   }
 };
-//
 
-// export const countAllWaterRecordsByDate = async (req, res) => {
-//   const { id: ownerId } = req.params;
-//   const { date } = req.body;
-
-//   console.log(ownerId);
-//   console.log(date);
-
-//   try {
-//     const query = { owner: ownerId };
-
-//     if (date) {
-//       query.date = date;
-//     }
-
-//     const waterRecords = await Water.find(query);
-
-//     const amounts = waterRecords.map((record) => record.amounts).flat();
-
-//     return res.status(200).json({ success: true, data: amounts });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ success: false, error: "Server Error" });
-//   }
-// };
-
-// ! підрахунок всіх записів про спожиту воду за день
-
+// * Підрахунок всіх записів про спожиту воду за день *
 export const countAllWaterRecordsByDate = async (req, res) => {
-  const { id: ownerId } = req.params;
+  const { id: ownerId } = req.user;
   const { date } = req.body;
 
   try {
-    const query = { owner: ownerId };
+    const result = await countTotalAmountByDateService(ownerId, date);
+    return res.status(200).json({ success: true, ...result });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
 
-    if (date) {
-      query.date = date;
+// * Оновлення запису спожитої води *
+export const updateWaterAmount = async (req, res) => {
+  const { id: recordId } = req.params;
+  const { amountId, amount, time } = req.body;
+
+  try {
+    const updatedAmount = await updateWaterAmountByIdService(
+      recordId,
+      amountId,
+      amount,
+      time
+    );
+    return res.status(200).json({ success: true, data: updatedAmount });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// * Видалення запису спожитої води *
+export const removeWaterAmount = async (req, res) => {
+  const { id: recordId } = req.params;
+  const { _id: amountId } = req.body;
+
+  try {
+    const result = await deleteWaterAmountService(recordId, amountId);
+    if (result.success) {
+      return res
+        .status(200)
+        .json({ success: true, message: "Amount deleted successfully" });
     }
+    return res
+      .status(result.statusCode || 500)
+      .json({ success: false, error: result.error || "Server Error" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error: "Server Error" });
+  }
+};
 
-    const waterRecords = await Water.find(query);
+// * Отримання всіх записів користувача за місяць *
+export const getWaterRecordsByCurrentUserAndMonth = async (
+  { user, body },
+  res
+) => {
+  try {
+    const { _id: userId } = user;
+    const { month } = body;
 
-    const amounts = waterRecords.map((record) => record.amounts).flat();
+    const waterRecords = await getWaterRecordsByUserAndMonth(userId, month);
 
-    // Підрахунок суми всіх значень amount
-    const totalAmount = amounts.reduce((sum, record) => sum + record.amount, 0);
+    let totalAmount = 0;
+    waterRecords.forEach((record) => {
+      record.amounts.forEach((amountRecord) => {
+        totalAmount += amountRecord.amount;
+      });
+    });
 
     return res
       .status(200)
-      .json({ success: true, date, data: amounts, totalAmount });
+      .json({ success: true, data: waterRecords, totalAmount });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ success: false, error: "Server Error" });
   }
 };
