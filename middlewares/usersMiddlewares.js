@@ -78,19 +78,11 @@ export const updateAvatarMiddleware = catchAsync(async (req, res, next) => {
   next();
 });
 
-export const validateUpdateUser = (req, res, next) => {
+export const validateUpdatedField = (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
     next(HttpError(400, "Body must have at least one field"));
     return;
   }
-  next();
-};
-
-export const isValidId = (req, res, next) => {
-  const { id } = req.params;
-
-  if (!isValidObjectId(id)) next(HttpError(400, `${id} is not valid id`));
-
   next();
 };
 
