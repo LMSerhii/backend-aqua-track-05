@@ -59,3 +59,14 @@ export const refreshTokenService = async (refreshToken) => {
 
 export const upgradeUser = (id, body) =>
   User.findByIdAndUpdate(id, body, { new: true });
+
+export const resetPasswordService = async (otp, newPassword, id) => {
+  const user = await User.findById({ _id: id });
+
+  user.password = newPassword;
+  await user.hashPassword();
+  user.passwordResetToken = undefined;
+  user.passwordResetTokenExp = undefined;
+
+  await user.save();
+};
