@@ -4,8 +4,9 @@ import { handleMongooseError } from "../utils/handleMangooseError.js";
 const waterSchema = new Schema(
   {
     owner: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "user",
+      required: true,
     },
     date: {
       type: String,
