@@ -22,13 +22,12 @@ import {
   sigupUserSchema,
 } from "../schemas/usersSchemas.js";
 import {
-  isValidId,
   loginUserMiddleware,
   logoutUserMiddleware,
   resetMiddleware,
   signUpUserMiddleware,
   updateAvatarMiddleware,
-  validateUpdateUser,
+  validateUpdatedField,
 } from "../middlewares/usersMiddlewares.js";
 import {
   auth,
@@ -106,6 +105,6 @@ authRouter.patch(
   updateAvatarController
 );
 
-authRouter.put("/:id", isValidId, auth, validateUpdateUser, updateUser);
+authRouter.put("/update", auth, validateUpdatedField, updateUser);
 
 export default authRouter;
