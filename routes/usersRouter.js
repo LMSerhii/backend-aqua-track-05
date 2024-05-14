@@ -5,6 +5,7 @@ import {
   forgotPassword,
   login,
   logout,
+  notify,
   refresh,
   resendVerifyController,
   resetPassword,
@@ -106,5 +107,7 @@ authRouter.patch(
 );
 
 authRouter.put("/update", auth, validateUpdatedField, updateUser);
+
+authRouter.put("/notify-to-verify", notify);
 
 export default authRouter;
