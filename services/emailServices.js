@@ -41,8 +41,22 @@ export const sendForgotTokenByEmail = async (email, verificationToken) => {
     from: MAIL_NAME,
     to: email,
     subject: "Reset password link",
-    // html: `<a target="_blank" href="${BASE_URL}:${PORT}/api/v1/users/reset-password/${verificationToken}">Click verify email</a>`,
-    html: `<a target="_blank" href="${BASE_URL}:8000/reset-password-form/${verificationToken}">Click verify email</a>`,
+    html: `<table style="width: 100%; max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+    <tr>
+      <td>
+        <h2 style="text-align: center;">AquaTrack - Password Reset</h2>
+        <p style="text-align: center;">Dear User,</p>
+        <p style="text-align: center;">
+        You have requested to reset your password on AquaTrack. To proceed with the password reset, please click the link below:</p>
+        <p style="text-align: center;">
+        <a href="${BASE_URL}:8000/reset-password-form/${verificationToken}" 
+        style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none;">
+      Reset Password</a></p>
+        <p style="text-align: center;">If you did not request this password reset, you can safely ignore this email.</p>
+        <p style="text-align: center;">Best Regards,<br>AquaTrack Team</p>
+      </td>
+    </tr>
+  </table>`,
   });
 
   console.log("Reset password link sent");
