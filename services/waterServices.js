@@ -128,3 +128,21 @@ export const getWaterRecordsByUserAndMonth = async (userId, month) => {
     throw new Error("Server Error");
   }
 };
+
+export const listWaters = (body) => Water.find(body);
+
+export const updateEntry = (foundedEntryId, amountId, newAmount) =>
+  Water.findOneAndUpdate(
+    { _id: foundedEntryId, "amounts._id": amountId },
+    { $set: { "amounts.$.amount": newAmount } },
+    { new: true }
+  );
+
+export const deleteEntry = (foundedEntryId, amountId) =>
+  Water.findByIdAndUpdate(
+    foundedEntryId,
+    {
+      $pull: { amounts: { _id: amountId } },
+    },
+    { new: true }
+  );
