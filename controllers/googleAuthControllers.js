@@ -11,21 +11,7 @@ export const googleAuth = (req, res) => {
 export const googleRedirect = (req, res, next) => {
   const { name, email, token, refreshToken, avatar } = req.user;
 
-  //   return res.redirect(
-  //     `${FRONTEND_URL}/signin/?token=${token}refreshToken=${refreshToken}`
-  //   );
-
   return res.redirect(
-    `${FRONTEND_URL}/tracker/?token=${token}refreshToken=${refreshToken}`
+    `${FRONTEND_URL}/?name=${name}&email=${email}&token=${token}&refreshToken=${refreshToken}`
   );
-
-  //   res.json({
-  //     token,
-  //     refreshToken,
-  //     user: {
-  //       name,
-  //       email,
-  //       avatar,
-  //     },
-  //   });
 };
