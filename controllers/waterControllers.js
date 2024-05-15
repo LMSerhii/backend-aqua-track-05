@@ -58,7 +58,7 @@ export const updateWaterAmount = catchAsync(async (req, res) => {
 
   const updatedEntry = await updateEntry(foundedEntryId, amountId, newAmount);
 
-  res.json({ updatedEntry });
+  res.json({ data: updatedEntry });
 });
 
 export const removeWaterAmount = catchAsync(async (req, res) => {
@@ -66,8 +66,7 @@ export const removeWaterAmount = catchAsync(async (req, res) => {
 
   const deletedEntry = await deleteEntry(foundedEntryId, amountId);
 
-  // res.json({ deletedEntry });
-  res.sendStatus(204);
+  res.json({ data: deletedEntry });
 });
 
 // * Видалення запису спожитої води *
