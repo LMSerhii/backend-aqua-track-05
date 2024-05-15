@@ -2,6 +2,7 @@ import axios from "axios";
 import queryString from "query-string";
 import {
   BASE_URL,
+  FRONTEND_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   PORT,
@@ -56,11 +57,13 @@ export const googleRedirectMiddleware = catchAsync(async (req, res, next) => {
     },
   });
 
-  console.log("userData", userData);
-
   const user = await findUserByEmailService(userData.data.email);
 
-  if (!user) return next(HttpError(401));
+  // if (!user) return next(HttpError(401));
+
+  if (!user) {
+    return res.redirect(`${FRONTEND_URL}/signup`);
+  }
 
   await user.createToken();
   await user.createRefreshToken();
