@@ -41,10 +41,10 @@ export const updateWaterAmount = catchAsync(async (req, res) => {
   res.json({ data: updatedEntry });
 });
 
-
 // * Видалення запису спожитої води *
 export const removeWaterAmount = catchAsync(async (req, res) => {
   const { foundedEntryId, amountId } = req.query;
+
   const deletedEntry = await deleteEntry(foundedEntryId, amountId);
   res.json({ data: deletedEntry });
 });

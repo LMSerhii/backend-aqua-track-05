@@ -1,11 +1,12 @@
+import fs from "fs";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import path, { dirname } from "path";
 import mongoose from "mongoose";
-
-import { fileURLToPath } from "url";
-
+import swaggerUI from "swagger-ui-express";
+// import swaggerDocument from "./swagger.json" assert { type: "json" };
 
 import contactsRouter from "./routes/contactsRouter.js";
 import waterRouter from "./routes/waterRouter.js";
@@ -13,6 +14,8 @@ import { MONGODB_URL, PORT } from "./index.js";
 
 import authRouter from "./routes/usersRouter.js";
 import googleAuthRouter from "./routes/googleAuthRouter.js";
+
+const swaggerDocument = JSON.parse(fs.readFileSync("./swagger.json", "utf-8"));
 
 const app = express();
 
@@ -23,8 +26,6 @@ app.use(express.static("public"));
 
 // Routes
 const pathPrefix = "/api/v1";
-
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -39,15 +40,16 @@ app.get(`${pathPrefix}/users/reset-password-form/:otp`, (req, res) => {
 
 app.use(express.static(path.join(__dirname, "public")));
 
-
-app.use(`${pathPrefix}/link`, (req, res) =>
-  res.sendFile(path.join(process.cwd(), "./public/link.html"))
-);
-
 app.use(`${pathPrefix}/auth`, googleAuthRouter);
 app.use(`${pathPrefix}/users`, authRouter);
 app.use(`${pathPrefix}/contacts`, contactsRouter);
 app.use(`${pathPrefix}/water`, waterRouter);
+
+app.use(
+  `${pathPrefix}/api-docs`,
+  swaggerUI.serve,
+  swaggerUI.setup(swaggerDocument)
+);
 
 // Error handles
 app.use((_, res) => {
