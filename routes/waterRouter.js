@@ -8,11 +8,15 @@ import {
   updateWaterAmount,
 } from "../controllers/waterControllers.js";
 import { auth } from "../middlewares/authMiddlewares.js";
-import { updateArrayMiddleware } from "../middlewares/watersMiddleware.js";
+
+import {
+  updateArrayMiddleware,
+  validateWaterData,
+} from "../middlewares/watersMiddlewar.js";
 
 const waterRouter = express.Router();
 
-waterRouter.post("/add", auth, addWaterAmount);
+waterRouter.post("/add", auth, validateWaterData, addWaterAmount);
 
 waterRouter.post("/daily_count", auth, countAllWaterRecordsByDate);
 

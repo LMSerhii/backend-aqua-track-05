@@ -4,13 +4,15 @@ import cors from "cors";
 import path, { dirname } from "path";
 import mongoose from "mongoose";
 
+import { fileURLToPath } from "url";
+
+
 import contactsRouter from "./routes/contactsRouter.js";
 import waterRouter from "./routes/waterRouter.js";
 import { MONGODB_URL, PORT } from "./index.js";
 
 import authRouter from "./routes/usersRouter.js";
 import googleAuthRouter from "./routes/googleAuthRouter.js";
-
 
 const app = express();
 
@@ -21,6 +23,22 @@ app.use(express.static("public"));
 
 // Routes
 const pathPrefix = "/api/v1";
+
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+app.get(`${pathPrefix}/users/forgot-password-form`, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "mailForm.html"));
+});
+
+app.get(`${pathPrefix}/users/reset-password-form/:otp`, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "passwordForm.html"));
+});
+
+app.use(express.static(path.join(__dirname, "public")));
+
 
 app.use(`${pathPrefix}/link`, (req, res) =>
   res.sendFile(path.join(process.cwd(), "./public/link.html"))
