@@ -58,7 +58,7 @@ export const current = (req, res) => {
 };
 
 export const verifyByEmailController = (req, res) => {
-  res.redirect(`${FRONTEND_URL}/signin`);
+  res.redirect(`${FRONTEND_URL}/notify`);
 };
 
 export const resendVerifyController = (req, res) => {
@@ -96,3 +96,8 @@ export const resetPassword = catchAsync(async (req, res) => {
 
   res.status(200).json({ msg: "Password has been updated" });
 });
+
+export const notify = (req, res) => {
+
+  res.status(200)
+};

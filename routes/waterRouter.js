@@ -8,6 +8,7 @@ import {
   updateWaterAmount,
 } from "../controllers/waterControllers.js";
 import { auth } from "../middlewares/authMiddlewares.js";
+
 import {
   updateArrayMiddleware,
   validateWaterData,
@@ -16,14 +17,13 @@ import {
 const waterRouter = express.Router();
 
 waterRouter.post("/add", auth, validateWaterData, addWaterAmount);
+
 waterRouter.post("/daily_count", auth, countAllWaterRecordsByDate);
+
 waterRouter.put("/edit", auth, updateArrayMiddleware, updateWaterAmount);
-waterRouter.patch(
-  "/delete/:id",
-  auth,
-  updateArrayMiddleware,
-  removeWaterAmount
-);
+
+waterRouter.put("/delete", auth, updateArrayMiddleware, removeWaterAmount);
+
 waterRouter.post("/month", auth, getWaterRecordsByCurrentUserAndMonth);
 
 export default waterRouter;

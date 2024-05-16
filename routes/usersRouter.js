@@ -5,6 +5,7 @@ import {
   forgotPassword,
   login,
   logout,
+  notify,
   refresh,
   resendVerifyController,
   resetPassword,
@@ -22,13 +23,12 @@ import {
   sigupUserSchema,
 } from "../schemas/usersSchemas.js";
 import {
-  isValidId,
   loginUserMiddleware,
   logoutUserMiddleware,
   resetMiddleware,
   signUpUserMiddleware,
   updateAvatarMiddleware,
-  validateUpdateUser,
+  validateUpdatedField,
 } from "../middlewares/usersMiddlewares.js";
 import {
   auth,
@@ -106,6 +106,8 @@ authRouter.patch(
   updateAvatarController
 );
 
-authRouter.put("/:id", isValidId, auth, validateUpdateUser, updateUser);
+authRouter.put("/update", auth, validateUpdatedField, updateUser);
+
+authRouter.put("/notify-to-verify", notify);
 
 export default authRouter;
