@@ -2,22 +2,41 @@ import mongoose from "mongoose";
 
 import { Water } from "../models/waterModel.js";
 
+// export const addWaterAmountService = async (ownerID, body) => {
+//   try {
+//     const { amount, time, date } = body;
+//     let water = await Water.findOne({ owner: ownerID, date });
+
+//     if (water) {
+//       water.amounts.push({ amount, time });
+//     } else {
+//       water = new Water({
+//         owner: ownerID,
+//         date,
+//         amounts: [{ amount, time }],
+//       });
+//     }
+
+//     await water.save();
+
+//     return { success: true, statusCode: 201, data: water };
+//   } catch (error) {
+//     console.error(error);
+//     return { success: false, statusCode: 500, error: "Помилка сервера" };
+//   }
+// };
+
 export const addWaterAmountService = async (ownerID, body) => {
   try {
     const { amount, time, date } = body;
-    let water = await Water.findOne({ owner: ownerID, date });
 
-    if (water) {
-      water.amounts.push({ amount, time });
-    } else {
-      water = new Water({
-        owner: ownerID,
-        date,
-        amounts: [{ amount, time }],
-      });
-    }
-
-    await water.save();
+    // Шукаємо запис про воду для даного користувача і дати
+    const water = await Water.findOneAndUpdate(
+      { owner: ownerID, date },
+      // Додаємо новий запис про воду до масиву amounts або створюємо новий об'єкт води, якщо запис не існує
+      { $push: { amounts: { amount, time } } },
+      { new: true, upsert: true } // Якщо запис не знайдено, створюємо новий
+    );
 
     return { success: true, statusCode: 201, data: water };
   } catch (error) {
@@ -128,3 +147,21 @@ export const getWaterRecordsByUserAndMonth = async (userId, month) => {
     throw new Error("Server Error");
   }
 };
+
+export const listWaters = (body) => Water.find(body);
+
+export const updateEntry = (foundedEntryId, amountId, newAmount) =>
+  Water.findOneAndUpdate(
+    { _id: foundedEntryId, "amounts._id": amountId },
+    { $set: { "amounts.$.amount": newAmount } },
+    { new: true }
+  );
+
+export const deleteEntry = (foundedEntryId, amountId) =>
+  Water.findByIdAndUpdate(
+    foundedEntryId,
+    {
+      $pull: { amounts: { _id: amountId } },
+    },
+    { new: true }
+  );
