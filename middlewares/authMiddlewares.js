@@ -1,5 +1,8 @@
 import { getContactById } from "../services/contactsServices.js";
-import { sendEmail } from "../services/emailServices.js";
+import {
+  sendEmail,
+  sendForgotTokenByEmail,
+} from "../services/emailServices.js";
 import {
   findUserByEmailService,
   findUserByRefreshToken,
@@ -44,9 +47,26 @@ export const verifyByEmailMiddleware = catchAsync(async (req, res, next) => {
 });
 
 export const sendVerifyEmail = catchAsync(async (req, res, next) => {
-  const { email, verificationToken } = req.user;
+  const { name, email, verificationToken } = req.user;
 
-  await sendEmail(email, verificationToken);
+  await sendEmail(name, email, verificationToken);
+  next();
+});
+
+export const sendResettoken = catchAsync(async (req, res, next) => {
+  const user = await findUserByEmailService(req.body.email);
+
+  if (!user) {
+    return res
+      .status(200)
+      .json({ msg: "Password reset instructions sent by email" });
+  }
+
+  const otp = await user.createPasswordResetToken();
+  await user.save();
+
+  await sendForgotTokenByEmail(req.body.email, otp);
+
   next();
 });
 
@@ -56,12 +76,10 @@ export const resendVerifyEmailMiddleware = catchAsync(
 
     const user = await findUserByEmailService(email);
 
-    if (!user) {
-      throw HttpError(404, "User not found");
-    }
+    if (!user) return next(HttpError(404, "User not found"));
 
     if (user.verify) {
-      throw HttpError(400, "Verification has already been passed");
+      return next(HttpError(400, "Verification has already been passed"));
     }
 
     req.user = user;
@@ -92,9 +110,7 @@ export const verifyRefreshTokenMiddleware = catchAsync(
 
     const isExist = await findUserByRefreshToken(refreshToken);
 
-    if (!isExist) {
-      throw HttpError(403, "Token inactive");
-    }
+    if (!isExist) return next(HttpError(403, "Token inactive"));
 
     next();
   }
