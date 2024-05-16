@@ -1,4 +1,5 @@
 import axios from "axios";
+import { nanoid } from "nanoid";
 import queryString from "query-string";
 import {
   BASE_URL,
@@ -8,7 +9,11 @@ import {
   PORT,
 } from "../index.js";
 import { catchAsync } from "../utils/catchAsync.js";
-import { findUserByEmailService } from "../services/usersServices.js";
+import {
+  createUserService,
+  findUserByEmailService,
+  updateVerify,
+} from "../services/usersServices.js";
 import HttpError from "../utils/HttpError.js";
 
 export const googleAuthMiddleware = (req, res, next) => {
@@ -57,12 +62,16 @@ export const googleRedirectMiddleware = catchAsync(async (req, res, next) => {
     },
   });
 
-  const user = await findUserByEmailService(userData.data.email);
-
-  // if (!user) return next(HttpError(401));
+  let user = await findUserByEmailService(userData.data.email);
 
   if (!user) {
-    return res.redirect(`${FRONTEND_URL}/signup`);
+    user = await createUserService({
+      name: userData.data.email.split("@")[0],
+      email: userData.data.email,
+      password: nanoid(),
+    });
+
+    await updateVerify(user._id);
   }
 
   await user.createToken();
