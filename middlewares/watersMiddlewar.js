@@ -16,7 +16,8 @@ export const validateWaterData = (req, res, next) => {
 
 export const updateArrayMiddleware = catchAsync(async (req, res, next) => {
   const { _id: owner } = req.user;
-  const { date, amount: newAmount, id: amountId } = req.body;
+  const { date } = req.query;
+  const { amount: newAmount, id: amountId } = req.body;
 
   const allWaterArray = await listWaters({ owner, date });
 

@@ -3,6 +3,7 @@ import express from "express";
 import {
   addWaterAmount,
   countAllWaterRecordsByDate,
+  dailyTrack,
   getWaterRecordsByCurrentUserAndMonth,
   removeWaterAmount,
   updateWaterAmount,
@@ -18,7 +19,7 @@ const waterRouter = express.Router();
 
 waterRouter.post("/add", auth, validateWaterData, addWaterAmount);
 
-waterRouter.post("/daily_count", auth, countAllWaterRecordsByDate);
+waterRouter.get("/daily_track", auth, dailyTrack);
 
 waterRouter.put("/edit", auth, updateArrayMiddleware, updateWaterAmount);
 

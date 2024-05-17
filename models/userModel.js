@@ -69,7 +69,7 @@ const userSchema = new Schema(
 
     dailyWater: {
       type: Number,
-      default: null,
+      default: 1500,
     },
 
     passwordResetToken: String,
@@ -122,12 +122,15 @@ userSchema.methods.comparePassword = async function (password) {
 
 // eslint-disable-next-line func-names
 userSchema.methods.createPasswordResetToken = function () {
-  const resetToken = crypto.randomBytes(32).toString('hex');
+  const resetToken = crypto.randomBytes(32).toString("hex");
 
-  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
   this.passwordResetTokenExp = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
-}
+};
 
 export const User = model("user", userSchema);
