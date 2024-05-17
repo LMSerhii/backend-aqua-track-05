@@ -24,6 +24,6 @@ waterRouter.put("/edit", auth, updateArrayMiddleware, updateWaterAmount);
 
 waterRouter.put("/delete", auth, updateArrayMiddleware, removeWaterAmount);
 
-waterRouter.post("/month", auth, getWaterRecordsByCurrentUserAndMonth);
+waterRouter.get("/month", auth, getWaterRecordsByCurrentUserAndMonth);
 
 export default waterRouter;
