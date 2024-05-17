@@ -3,6 +3,7 @@ import {
   countTotalAmountByDateService,
   deleteEntry,
   deleteWaterAmountService,
+  getTrackList,
   getWaterRecordsByUserAndMonth,
   updateEntry,
   updateWaterAmountByIdService,
@@ -67,3 +68,14 @@ export const getWaterRecordsByCurrentUserAndMonth = catchAsync(
     res.status(200).json({ success: true, data: waterRecords, totalAmount });
   }
 );
+
+export const dailyTrack = catchAsync(async (req, res) => {
+  const { id: owner } = req.user;
+  const { date } = req.query;
+
+  const result = await getTrackList(owner, date);
+
+  if (!result[0]) return res.json([]);
+
+  return res.json([...result[0].amounts]);
+});

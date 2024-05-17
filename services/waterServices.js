@@ -165,3 +165,5 @@ export const deleteEntry = (foundedEntryId, amountId) =>
     },
     { new: true }
   );
+
+export const getTrackList = (owner, date) => Water.find({ owner, date });
