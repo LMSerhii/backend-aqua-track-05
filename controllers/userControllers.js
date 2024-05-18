@@ -24,7 +24,17 @@ export const signup = (req, res) => {
 };
 
 export const login = (req, res) => {
-  const { name, email, token, refreshToken, avatar } = req.user;
+  const {
+    name,
+    email,
+    token,
+    refreshToken,
+    avatar,
+    gender,
+    weight,
+    sportTime,
+    dailyWater,
+  } = req.user;
 
   res.json({
     token,
@@ -33,6 +43,10 @@ export const login = (req, res) => {
       name,
       email,
       avatar,
+      gender,
+      weight,
+      sportTime,
+      dailyWater,
     },
   });
 };
@@ -98,6 +112,5 @@ export const resetPassword = catchAsync(async (req, res) => {
 });
 
 export const notify = (req, res) => {
-
-  res.status(200)
+  res.status(200);
 };
