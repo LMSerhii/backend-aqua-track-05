@@ -51,13 +51,10 @@ export const removeWaterAmount = catchAsync(async (req, res) => {
 });
 
 // * Отримання всіх записів користувача за місяць *
-export const getWaterRecordsByCurrentUserAndMonth = async (
-  { user, body },
-  res
-) => {
-  try {
-    const { _id: userId } = user;
-    const { month } = body;
+export const getWaterRecordsByCurrentUserAndMonth = catchAsync(
+  async (req, res) => {
+    const { _id: userId } = req.user;
+    const { month } = req.query;
 
     const waterRecords = await getWaterRecordsByUserAndMonth(userId, month);
 
@@ -68,13 +65,9 @@ export const getWaterRecordsByCurrentUserAndMonth = async (
       });
     });
 
-    return res
-      .status(200)
-      .json({ success: true, data: waterRecords, totalAmount });
-  } catch (error) {
-    return res.status(500).json({ success: false, error: "Server Error" });
+    res.status(200).json({ success: true, data: waterRecords, totalAmount });
   }
-};
+);
 
 export const dailyTrack = catchAsync(async (req, res) => {
   const { id: owner } = req.user;
