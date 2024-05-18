@@ -3,19 +3,10 @@
   "info": {
     "title": "Daily Water Intake Tracker",
     "description": "The \"Daily Water Intake Tracker\" app helps users ensure their bodies receive an adequate amount of water each day. With this app, you can easily track your hydration level.\n  \n  Key Features\n\n  1) Personal Profile Creation:  The app allows users to create their own profile, where they can input individual characteristics such as gender, weight, physical activity, for accurate calculation of water intake requirements.\n    \n  2) Water Intake Tracking:  Users can easily monitor the amount of water they have consumed throughout the day using the app's convenient interface.\n    \n  3) Statistical Analysis: Users can view their water intake statistics on a monthly basis to track their progress and identify trends.\n    \n  This app serves as a reliable companion in maintaining a healthy lifestyle, reminding users of the importance of proper hydration for optimal body function.",
-    "termsOfService": "http://swagger.io/terms/",
     "contact": {
-      "email": "leonovserhii@swagger.io"
-    },
-    "license": {
-      "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+      "email": "leonovserhii89@gmail.com"
     },
     "version": "1.0.0"
-  },
-  "externalDocs": {
-    "description": "Find out more about Swagger",
-    "url": "http://swagger.io"
   },
   "servers": [
     {
@@ -24,23 +15,15 @@
   ],
   "tags": [
     {
-      "name": "pet",
-      "description": "Everything about your Pets",
-      "externalDocs": {
-        "description": "Find out more",
-        "url": "http://swagger.io"
-      }
+      "name": "Tracks",
+      "description": "Access to AquaTrack"
     },
     {
-      "name": "store",
-      "description": "Access to Petstore orders",
-      "externalDocs": {
-        "description": "Find out more about our store",
-        "url": "http://swagger.io"
-      }
+      "name": "Auth",
+      "description": "Google authorization"
     },
     {
-      "name": "user",
+      "name": "Users",
       "description": "Operations about user"
     }
   ],
