@@ -96,7 +96,7 @@ authRouter.post(
 
 authRouter.get("/current", auth, current);
 
-authRouter.get("/all", allUsers);
+authRouter.get("/all", auth, allUsers);
 
 authRouter.patch(
   "/avatars",

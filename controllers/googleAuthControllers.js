@@ -9,9 +9,31 @@ export const googleAuth = (req, res) => {
 };
 
 export const googleRedirect = (req, res, next) => {
-  const { name, email, token, refreshToken, avatar } = req.user;
+  const {
+    name,
+    email,
+    token,
+    refreshToken,
+    avatar,
+    gender,
+    weight,
+    sportTime,
+    dailyWater,
+  } = req.user;
+
+  const userData = JSON.stringify({
+    user: {
+      name,
+      email,
+      avatar,
+      gender,
+      weight,
+      sportTime,
+      dailyWater,
+    },
+  });
 
   return res.redirect(
-    `${FRONTEND_URL}/?name=${name}&email=${email}&token=${token}&refreshToken=${refreshToken}`
+    `${FRONTEND_URL}/?&token=${token}&refreshToken=${refreshToken}&userData=${userData}`
   );
 };
