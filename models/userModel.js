@@ -9,6 +9,7 @@ import {
   JWT_REFRESH_SECRET,
   JWT_SECRET_TEMP,
 } from "../index.js";
+import { Water } from "./waterModel.js";
 
 const userSchema = new Schema(
   {
@@ -80,6 +81,11 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
+
+// eslint-disable-next-line func-names
+userSchema.methods.removeUser = async function () {
+  await Water.deleteMany({ owner: this._id });
+};
 
 // eslint-disable-next-line func-names
 userSchema.methods.hashPassword = async function () {

@@ -1,14 +1,10 @@
 import fs from "fs";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
 import swaggerUI from "swagger-ui-express";
-// import swaggerDocument from "./swagger.json" assert { type: "json" };
 
-import contactsRouter from "./routes/contactsRouter.js";
 import waterRouter from "./routes/waterRouter.js";
 import { MONGODB_URL, PORT } from "./index.js";
 
@@ -30,7 +26,6 @@ const pathPrefix = "/api/v1";
 app.use(`${pathPrefix}/auth`, googleAuthRouter);
 app.use(`${pathPrefix}/users`, authRouter);
 app.use(`${pathPrefix}/water`, waterRouter);
-// app.use(`${pathPrefix}/contacts`, contactsRouter);
 
 app.use(
   `${pathPrefix}/api-docs`,
@@ -52,9 +47,7 @@ app.use((err, req, res, next) => {
 const port = PORT || 3000;
 const uri = MONGODB_URL;
 
-const clientOptions = {
-  // serverApi: { version: "1", strict: true, deprecationErrors: true },
-};
+const clientOptions = {};
 
 const run = async () => {
   try {

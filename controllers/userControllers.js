@@ -90,8 +90,7 @@ export const updateUser = catchAsync(async (req, res) => {
 
   const user = await upgradeUser(id, req.body);
 
-  const { name, email, avatar, gender, weight, sportTime, dailyWater } =
-    user;
+  const { name, email, avatar, gender, weight, sportTime, dailyWater } = user;
 
   res.json({ name, email, avatar, gender, weight, sportTime, dailyWater });
 });
@@ -117,3 +116,11 @@ export const resetPassword = catchAsync(async (req, res) => {
 export const notify = (req, res) => {
   res.status(200);
 };
+
+export const deleteController = catchAsync(async (req, res, next) => {
+  const { user } = req;
+
+  await user.removeUser();
+
+  res.sendStatus(204);
+});

@@ -2,6 +2,7 @@ import express from "express";
 import {
   allUsers,
   current,
+  deleteController,
   forgotPassword,
   login,
   logout,
@@ -96,7 +97,7 @@ authRouter.post(
 
 authRouter.get("/current", auth, current);
 
-authRouter.get("/all", auth, allUsers);
+authRouter.get("/all", allUsers);
 
 authRouter.patch(
   "/avatars",
@@ -107,6 +108,8 @@ authRouter.patch(
 );
 
 authRouter.put("/update", auth, validateUpdatedField, updateUser);
+
+authRouter.delete("/delete", auth, deleteController);
 
 authRouter.get("/notify-to-verify", notify);
 
