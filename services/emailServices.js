@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { BASE_URL, MAIL_NAME, MAIL_PSW, PORT } from "../index.js";
+import { BASE_URL, FRONTEND_URL, MAIL_NAME, MAIL_PSW, PORT } from "../index.js";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.ukr.net",
@@ -32,8 +32,6 @@ export const sendEmail = async (name, email, verificationToken) => {
     <p>${BASE_URL}/api/v1/users/verify/${verificationToken}</p>
     <p>If you have problems, please paste the above URL into your web browser.</p>`,
   });
-
-  console.log("email sent");
 };
 
 export const sendForgotTokenByEmail = async (email, verificationToken) => {
@@ -49,7 +47,7 @@ export const sendForgotTokenByEmail = async (email, verificationToken) => {
         <p style="text-align: center;">
         You have requested to reset your password on AquaTrack. To proceed with the password reset, please click the link below:</p>
         <p style="text-align: center;">
-        <a href="${BASE_URL}:8000/reset-password-form/${verificationToken}" 
+        <a href="${FRONTEND_URL}/reset-password-form/${verificationToken}" 
         style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none;">
       Reset Password</a></p>
         <p style="text-align: center;">If you did not request this password reset, you can safely ignore this email.</p>
@@ -58,6 +56,4 @@ export const sendForgotTokenByEmail = async (email, verificationToken) => {
     </tr>
   </table>`,
   });
-
-  console.log("Reset password link sent");
 };

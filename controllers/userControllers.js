@@ -121,6 +121,7 @@ export const deleteController = catchAsync(async (req, res, next) => {
   const { user } = req;
 
   await user.removeUser();
+  await User.findByIdAndDelete(user._id);
 
   res.sendStatus(204);
 });

@@ -19,7 +19,7 @@ import HttpError from "../utils/HttpError.js";
 export const googleAuthMiddleware = (req, res, next) => {
   const stringifiedParams = queryString.stringify({
     client_id: GOOGLE_CLIENT_ID,
-    redirect_uri: `${BASE_URL}:${PORT}/api/v1/auth/google-redirect`,
+    redirect_uri: `${BASE_URL}/api/v1/auth/google-redirect`,
     scope: [
       "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/userinfo.profile",
@@ -48,7 +48,7 @@ export const googleRedirectMiddleware = catchAsync(async (req, res, next) => {
     data: {
       client_id: GOOGLE_CLIENT_ID,
       client_secret: GOOGLE_CLIENT_SECRET,
-      redirect_uri: `${BASE_URL}:${PORT}/api/v1/auth/google-redirect`,
+      redirect_uri: `${BASE_URL}/api/v1/auth/google-redirect`,
       grant_type: "authorization_code",
       code,
     },
