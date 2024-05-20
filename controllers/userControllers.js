@@ -72,11 +72,11 @@ export const current = (req, res) => {
 };
 
 export const verifyByEmailController = (req, res) => {
-  res.redirect(`${FRONTEND_URL}/notify`);
+  res.status(200).redirect(`${FRONTEND_URL}/notify`);
 };
 
 export const resendVerifyController = (req, res) => {
-  res.json({ message: "Verification email sent" });
+  res.status(200).json({ message: "Verification email sent" });
 };
 
 export const updateAvatarController = (req, res) => {
@@ -90,7 +90,10 @@ export const updateUser = catchAsync(async (req, res) => {
 
   const user = await upgradeUser(id, req.body);
 
-  res.json(user);
+  const { name, email, avatar, gender, weight, sportTime, dailyWater } =
+    user;
+
+  res.json({ name, email, avatar, gender, weight, sportTime, dailyWater });
 });
 
 export const allUsers = catchAsync(async (req, res) => {

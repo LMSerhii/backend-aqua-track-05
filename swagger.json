@@ -10,615 +10,702 @@
   },
   "servers": [
     {
-      "url": "https://localhost:3001/api/v1"
+      "url": "http://localhost:3001/api/v1"
     }
   ],
   "tags": [
     {
-      "name": "Tracks",
-      "description": "Access to AquaTrack"
-    },
-    {
-      "name": "Auth",
-      "description": "Google authorization"
+      "name": "Authentication",
+      "description": "Endpoints for user authentication and authorization"
     },
     {
       "name": "Users",
-      "description": "Operations about user"
+      "description": "Endpoints for managing user information"
+    },
+    {
+      "name": "Water Tracking",
+      "description": "Endpoints for tracking water consumption"
+    },
+    {
+      "name": "Google Authentication",
+      "description": "Endpoints for Google OAuth integration"
     }
   ],
+
   "paths": {
-    "/pet": {
+    "/users/signup": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Register a new user",
+        "description": "Register a new user with email verification",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignupResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email already in use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailAlreadyInUse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/verify/{verificationToken}": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Verify email address",
+        "description": "Verify a user's email address using a verification token",
+        "parameters": [
+          {
+            "name": "verificationToken",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "User successfully verified"
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/verify": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Resend verification email",
+        "description": "Resend the email verification link",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification email sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationEmailSentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/signin": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login a user",
+        "description": "Authenticate user with email and password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Email or password is wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Logout user",
+        "description": "Logout the currently authenticated user",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "204": {
+            "description": "User successfully logged out"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/forgot-password": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Forgot password",
+        "description": "Send a password reset token to the user's email",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset token sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForgotResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/reset-password/{otp}": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Reset password",
+        "description": "Reset the user's password using the provided OTP",
+        "parameters": [
+          {
+            "name": "otp",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password has been updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordHasBeenUpdatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error or token has expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/refresh": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Refresh access token",
+        "description": "Refresh the access token using a refresh token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshToken"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update access and refresh tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshTokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token inactive",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/current": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get current user",
+        "description": "Retrieve information of the currently authenticated user",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "User information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentUserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/all": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users",
+        "description": "Retrieve information for all users",
+        "responses": {
+          "200": {
+            "description": "List of users retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllUsersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/avatars": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Update user avatar",
+        "description": "Upload and update the user's avatar",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadAvatar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Avatar updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadAvatarResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/update": {
       "put": {
-        "tags": ["pet"],
-        "summary": "Update an existing pet",
-        "description": "Update an existing pet by Id",
-        "operationId": "updatePet",
+        "tags": ["Users"],
+        "summary": "Update user information",
+        "description": "Update the authenticated user's information",
+        "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Update an existent pet in the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Pet"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/Pet"
-              }
-            },
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/Pet"
+                "$ref": "#/components/schemas/UpdateUser"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
-            "description": "Successful operation",
+            "description": "User information updated successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Pet"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/Pet"
+                  "$ref": "#/components/schemas/CurrentUserResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid ID supplied"
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
           },
-          "404": {
-            "description": "Pet not found"
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
           },
-          "422": {
-            "description": "Validation exception"
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
           }
-        },
-        "security": [
-          {
-            "petstore_auth": ["write:pets", "read:pets"]
+        }
+      }
+    },
+    "/users/notify-to-verify": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Notify user to verify email",
+        "description": "Send a notification to the user to verify their email address",
+        "responses": {
+          "200": {
+            "description": "Notification page"
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
           }
-        ]
-      },
+        }
+      }
+    },
+    "/water/add": {
       "post": {
-        "tags": ["pet"],
-        "summary": "Add a new pet to the store",
-        "description": "Add a new pet to the store",
-        "operationId": "addPet",
+        "tags": ["Water Tracking"],
+        "summary": "Add water consumption",
+        "description": "Add the amount of water you drink",
+        "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Create a new pet in the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Pet"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/Pet"
-              }
-            },
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/Pet"
+                "$ref": "#/components/schemas/AddWaterData"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
-          "200": {
-            "description": "Successful operation",
+          "201": {
+            "description": "Water consumption added successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Pet"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/Pet"
+                  "$ref": "#/components/schemas/AddWaterDataResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid input"
-          },
-          "422": {
-            "description": "Validation exception"
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": ["write:pets", "read:pets"]
-          }
-        ]
-      }
-    },
-    "/pet/findByStatus": {
-      "get": {
-        "tags": ["pet"],
-        "summary": "Finds Pets by status",
-        "description": "Multiple status values can be provided with comma separated strings",
-        "operationId": "findPetsByStatus",
-        "parameters": [
-          {
-            "name": "status",
-            "in": "query",
-            "description": "Status values that need to be considered for filter",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "string",
-              "default": "available",
-              "enum": ["available", "pending", "sold"]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Pet"
-                  }
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Pet"
-                  }
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
           },
-          "400": {
-            "description": "Invalid status value"
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": ["write:pets", "read:pets"]
-          }
-        ]
-      }
-    },
-    "/pet/findByTags": {
-      "get": {
-        "tags": ["pet"],
-        "summary": "Finds Pets by tags",
-        "description": "Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.",
-        "operationId": "findPetsByTags",
-        "parameters": [
-          {
-            "name": "tags",
-            "in": "query",
-            "description": "Tags to filter by",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Pet"
-                  }
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Pet"
-                  }
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
           },
-          "400": {
-            "description": "Invalid tag value"
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": ["write:pets", "read:pets"]
-          }
-        ]
-      }
-    },
-    "/pet/{petId}": {
-      "get": {
-        "tags": ["pet"],
-        "summary": "Find pet by ID",
-        "description": "Returns a single pet",
-        "operationId": "getPetById",
-        "parameters": [
-          {
-            "name": "petId",
-            "in": "path",
-            "description": "ID of pet to return",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
+          "500": {
+            "description": "Server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Pet"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/Pet"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Pet not found"
-          }
-        },
-        "security": [
-          {
-            "api_key": []
-          },
-          {
-            "petstore_auth": ["write:pets", "read:pets"]
-          }
-        ]
-      },
-      "post": {
-        "tags": ["pet"],
-        "summary": "Updates a pet in the store with form data",
-        "description": "",
-        "operationId": "updatePetWithForm",
-        "parameters": [
-          {
-            "name": "petId",
-            "in": "path",
-            "description": "ID of pet that needs to be updated",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "description": "Name of pet that needs to be updated",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "description": "Status of pet that needs to be updated",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Invalid input"
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": ["write:pets", "read:pets"]
-          }
-        ]
-      },
-      "delete": {
-        "tags": ["pet"],
-        "summary": "Deletes a pet",
-        "description": "delete a pet",
-        "operationId": "deletePet",
-        "parameters": [
-          {
-            "name": "api_key",
-            "in": "header",
-            "description": "",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "petId",
-            "in": "path",
-            "description": "Pet id to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Invalid pet value"
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": ["write:pets", "read:pets"]
-          }
-        ]
-      }
-    },
-    "/pet/{petId}/uploadImage": {
-      "post": {
-        "tags": ["pet"],
-        "summary": "uploads an image",
-        "description": "",
-        "operationId": "uploadFile",
-        "parameters": [
-          {
-            "name": "petId",
-            "in": "path",
-            "description": "ID of pet to update",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "additionalMetadata",
-            "in": "query",
-            "description": "Additional Metadata",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/octet-stream": {
-              "schema": {
-                "type": "string",
-                "format": "binary"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "petstore_auth": ["write:pets", "read:pets"]
-          }
-        ]
-      }
-    },
-    "/store/inventory": {
-      "get": {
-        "tags": ["store"],
-        "summary": "Returns pet inventories by status",
-        "description": "Returns a map of status codes to quantities",
-        "operationId": "getInventory",
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "integer",
-                    "format": "int32"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
-      }
-    },
-    "/store/order": {
-      "post": {
-        "tags": ["store"],
-        "summary": "Place an order for a pet",
-        "description": "Place a new order in the store",
-        "operationId": "placeOrder",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Order"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/Order"
-              }
-            },
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/Order"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Order"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input"
-          },
-          "422": {
-            "description": "Validation exception"
-          }
-        }
-      }
-    },
-    "/store/order/{orderId}": {
-      "get": {
-        "tags": ["store"],
-        "summary": "Find purchase order by ID",
-        "description": "For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.",
-        "operationId": "getOrderById",
-        "parameters": [
-          {
-            "name": "orderId",
-            "in": "path",
-            "description": "ID of order that needs to be fetched",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Order"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/Order"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Order not found"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["store"],
-        "summary": "Delete purchase order by ID",
-        "description": "For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors",
-        "operationId": "deleteOrder",
-        "parameters": [
-          {
-            "name": "orderId",
-            "in": "path",
-            "description": "ID of the order that needs to be deleted",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Order not found"
-          }
-        }
-      }
-    },
-    "/user": {
-      "post": {
-        "tags": ["user"],
-        "summary": "Create user",
-        "description": "This can only be done by the logged in user.",
-        "operationId": "createUser",
-        "requestBody": {
-          "description": "Created user object",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            },
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          }
-        },
-        "responses": {
-          "default": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/ServerError"
                 }
               }
             }
@@ -626,511 +713,809 @@
         }
       }
     },
-    "/user/createWithList": {
-      "post": {
-        "tags": ["user"],
-        "summary": "Creates list of users with given input array",
-        "description": "Creates list of users with given input array",
-        "operationId": "createUsersWithListInput",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "successful operation"
-          }
-        }
-      }
-    },
-    "/user/login": {
-      "get": {
-        "tags": ["user"],
-        "summary": "Logs user into the system",
-        "description": "",
-        "operationId": "loginUser",
-        "parameters": [
-          {
-            "name": "username",
-            "in": "query",
-            "description": "The user name for login",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "password",
-            "in": "query",
-            "description": "The password for login in clear text",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "headers": {
-              "X-Rate-Limit": {
-                "description": "calls per hour allowed by the user",
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              },
-              "X-Expires-After": {
-                "description": "date in UTC when token expires",
-                "schema": {
-                  "type": "string",
-                  "format": "date-time"
-                }
-              }
-            },
-            "content": {
-              "application/xml": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid username/password supplied"
-          }
-        }
-      }
-    },
-    "/user/logout": {
-      "get": {
-        "tags": ["user"],
-        "summary": "Logs out current logged in user session",
-        "description": "",
-        "operationId": "logoutUser",
-        "parameters": [],
-        "responses": {
-          "default": {
-            "description": "successful operation"
-          }
-        }
-      }
-    },
-    "/user/{username}": {
-      "get": {
-        "tags": ["user"],
-        "summary": "Get user by user name",
-        "description": "",
-        "operationId": "getUserByName",
-        "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "description": "The name that needs to be fetched. Use user1 for testing. ",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid username supplied"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      },
+    "/water/edit": {
       "put": {
-        "tags": ["user"],
-        "summary": "Update user",
-        "description": "This can only be done by the logged in user.",
-        "operationId": "updateUser",
-        "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "description": "name that need to be deleted",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "tags": ["Water Tracking"],
+        "summary": "Edit water consumption",
+        "description": "Edit the amount of water consumed by the user",
+        "security": [{ "Bearer": [] }],
         "requestBody": {
-          "description": "Update an existent user in the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            },
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
+                "$ref": "#/components/schemas/EditWaterData"
               }
             }
           }
         },
         "responses": {
-          "default": {
-            "description": "successful operation"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["user"],
-        "summary": "Delete user",
-        "description": "This can only be done by the logged in user.",
-        "operationId": "deleteUser",
-        "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "description": "The name that needs to be deleted",
-            "required": true,
-            "schema": {
-              "type": "string"
+          "200": {
+            "description": "Water consumption edited successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditOrDeleteWaterDataResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
             }
           }
-        ],
+        }
+      }
+    },
+    "/water/delete": {
+      "put": {
+        "tags": ["Water Tracking"],
+        "summary": "Delete water consumption record",
+        "description": "Remove a water consumption record",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteWaterData"
+              }
+            }
+          }
+        },
         "responses": {
-          "400": {
-            "description": "Invalid username supplied"
+          "200": {
+            "description": "Water consumption record deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditOrDeleteWaterDataResponse"
+                }
+              }
+            }
           },
-          "404": {
-            "description": "User not found"
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/water/daily_track": {
+      "get": {
+        "tags": ["Water Tracking"],
+        "summary": "Get daily water consumption",
+        "description": "Retrieve the logged water consumption for the current day",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Water consumption record deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyTrackResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/water/month": {
+      "get": {
+        "tags": ["Water Tracking"],
+        "summary": "Get monthly water consumption",
+        "description": "Retrieve the logged water consumption for the current month",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Monthly water consumption retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonthlyTrackResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/google": {
+      "get": {
+        "tags": ["Google Authentication"],
+        "summary": "Google OAuth",
+        "description": "Redirect to Google for authentication",
+        "responses": {
+          "302": {
+            "description": "Redirecting to Google"
+          }
+        }
+      }
+    },
+    "/auth/google-redirect": {
+      "get": {
+        "tags": ["Google Authentication"],
+        "summary": "Google OAuth redirect",
+        "description": "Handle Google OAuth redirect",
+        "responses": {
+          "200": {
+            "description": "User authenticated via Google"
           }
         }
       }
     }
   },
+
   "components": {
     "schemas": {
-      "Order": {
+      "SignupUser": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "example": 10
-          },
-          "petId": {
-            "type": "integer",
-            "format": "int64",
-            "example": 198772
-          },
-          "quantity": {
-            "type": "integer",
-            "format": "int32",
-            "example": 7
-          },
-          "shipDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "description": "Order Status",
-            "example": "approved",
-            "enum": ["placed", "approved", "delivered"]
-          },
-          "complete": {
-            "type": "boolean"
-          }
-        },
-        "xml": {
-          "name": "order"
-        }
-      },
-      "Customer": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "example": 100000
-          },
-          "username": {
-            "type": "string",
-            "example": "fehguy"
-          },
-          "address": {
-            "type": "array",
-            "xml": {
-              "name": "addresses",
-              "wrapped": true
-            },
-            "items": {
-              "$ref": "#/components/schemas/Address"
-            }
-          }
-        },
-        "xml": {
-          "name": "customer"
-        }
-      },
-      "Address": {
-        "type": "object",
-        "properties": {
-          "street": {
-            "type": "string",
-            "example": "437 Lytton"
-          },
-          "city": {
-            "type": "string",
-            "example": "Palo Alto"
-          },
-          "state": {
-            "type": "string",
-            "example": "CA"
-          },
-          "zip": {
-            "type": "string",
-            "example": "94301"
-          }
-        },
-        "xml": {
-          "name": "address"
-        }
-      },
-      "Category": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "example": 1
-          },
-          "name": {
-            "type": "string",
-            "example": "Dogs"
-          }
-        },
-        "xml": {
-          "name": "category"
-        }
-      },
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "example": 10
-          },
-          "username": {
-            "type": "string",
-            "example": "theUser"
-          },
-          "firstName": {
-            "type": "string",
-            "example": "John"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "James"
-          },
           "email": {
             "type": "string",
-            "example": "john@email.com"
+            "format": "email",
+            "example": "user@example.com"
           },
           "password": {
             "type": "string",
-            "example": "12345"
-          },
-          "phone": {
-            "type": "string",
-            "example": "12345"
-          },
-          "userStatus": {
-            "type": "integer",
-            "description": "User Status",
-            "format": "int32",
-            "example": 1
+            "format": "password",
+            "example": "Password123@"
           }
         },
-        "xml": {
-          "name": "user"
-        }
+        "required": ["email", "password"]
       },
-      "Tag": {
+      "SignupResponse": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "xml": {
-          "name": "tag"
-        }
-      },
-      "Pet": {
-        "required": ["name", "photoUrls"],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "example": 10
-          },
           "name": {
             "type": "string",
-            "example": "doggie"
+            "example": "Jonh"
           },
-          "category": {
-            "$ref": "#/components/schemas/Category"
-          },
-          "photoUrls": {
-            "type": "array",
-            "xml": {
-              "wrapped": true
-            },
-            "items": {
-              "type": "string",
-              "xml": {
-                "name": "photoUrl"
-              }
-            }
-          },
-          "tags": {
-            "type": "array",
-            "xml": {
-              "wrapped": true
-            },
-            "items": {
-              "$ref": "#/components/schemas/Tag"
-            }
-          },
-          "status": {
+          "email": {
             "type": "string",
-            "description": "pet status in the store",
-            "enum": ["available", "pending", "sold"]
+            "format": "email",
+            "example": "user@example.com"
           }
-        },
-        "xml": {
-          "name": "pet"
         }
       },
-      "ApiResponse": {
+      "VerificationEmailSentResponse": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "type": {
-            "type": "string"
-          },
           "message": {
-            "type": "string"
+            "type": "string",
+            "example": "Verification email sent"
+          }
+        }
+      },
+      "EmailUser": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
           }
         },
-        "xml": {
-          "name": "##default"
-        }
-      }
-    },
-    "requestBodies": {
-      "Pet": {
-        "description": "Pet object that needs to be added to the store",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Pet"
-            }
+        "required": ["email"]
+      },
+      "ForgotResponse": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "example": "Password reset instructions sent by email"
+          }
+        },
+        "required": ["email"]
+      },
+      "LoginUser": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
           },
-          "application/xml": {
-            "schema": {
-              "$ref": "#/components/schemas/Pet"
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "Password123@"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "LoginUserResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NDllMTYwZDBhYjhjY2RmZjI1YmY3MyIsImlhdCI6MTcxNjExODI3MSwiZXhwIjoxNzE2MTIwMDcxfQ.A7x3fwZ4zIETdShTeux1lyKeXZ6WKo9ps6WZBVW4KSg"
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NDllMTYwZDBhYjhjY2RmZjI1YmY3MyIsImlhdCI6MTcxNjExODI3MSwiZXhwIjoxNzE2MTIwMDcxfQ.A7x3fwZ4zIETdShTeux1lyKeXZ6WKo9ps6WZBVW4KSg"
+          },
+          "user": {
+            "type": "object",
+            "example": {
+              "name": {
+                "type": "string",
+                "example": "Jonh"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "user@example.com"
+              },
+              "avatar": {
+                "type": "string",
+                "example": "https://gravatar.com/avatar/36641900b38575ca2a94c3998bb376a4.jpg?d=robohash"
+              },
+              "gender": {
+                "type": "boolean"
+              },
+              "weight": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "example": 75
+              },
+              "sportTime": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "example": 2
+              },
+              "dailyWater": {
+                "type": "integer",
+                "example": 1.5
+              }
             }
           }
         }
       },
-      "UserArray": {
-        "description": "List of user object",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/User"
+      "Unauthorized": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Error description"
+          }
+        }
+      },
+      "PasswordUser": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "Newpassword123@"
+          }
+        },
+        "required": ["password"]
+      },
+      "PasswordHasBeenUpdatedResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Password has been updated"
+          }
+        },
+        "required": ["password"]
+      },
+      "RefreshToken": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NDllMTYwZDBhYjhjY2RmZjI1YmY3MyIsImlhdCI6MTcxNjExODI3MSwiZXhwIjoxNzE2NzIzMDcxfQ.HDUbzJp9JoTyXOefIGhbQymEWx_CTSc6BhRkIeDbYnM"
+          }
+        },
+        "required": ["refreshToken"]
+      },
+      "RefreshTokenResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NDllMTYwZDBhYjhjY2RmZjI1YmY3MyIsImlhdCI6MTcxNjExODI3MSwiZXhwIjoxNzE2NzIzMDcxfQ.HDUbzJp9JoTyXOefIGhbQymEWx_CTSc6BhRkIeDbYnM"
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NDllMTYwZDBhYjhjY2RmZjI1YmY3MyIsImlhdCI6MTcxNjExODI3MSwiZXhwIjoxNzE2NzIzMDcxfQ.HDUbzJp9JoTyXOefIGhbQymEWx_CTSc6BhRkIeDbYnM"
+          }
+        }
+      },
+      "CurrentUserResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Jonh"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "avatar": {
+            "type": "string",
+            "example": "https://gravatar.com/avatar/36641900b38575ca2a94c3998bb376a4.jpg?d=robohash"
+          },
+          "gender": {
+            "type": "boolean"
+          },
+          "weight": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "example": 75
+          },
+          "sportTime": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "example": 2
+          },
+          "dailyWater": {
+            "type": "integer",
+            "example": 1.5
+          }
+        }
+      },
+      "AllUsersResponse": {
+        "type": "object",
+        "properties": {
+          "allUsers": {
+            "type": "integer",
+            "example": 18
+          }
+        }
+      },
+      "UploadAvatar": {
+        "type": "object",
+        "properties": {
+          "avatarURL": {
+            "type": "string",
+            "example": "https://gravatar.com/avatar/36641900b38575ca2a94c3998bb376a4.jpg?d=robohash"
+          }
+        },
+        "required": ["avatarURL"]
+      },
+      "UploadAvatarResponse": {
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string",
+            "example": "https://gravatar.com/avatar/36641900b38575ca2a94c3998bb376a4.jpg?d=robohash"
+          }
+        }
+      },
+      "UpdateUser": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Jonh"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "avatar": {
+            "type": "string",
+            "example": "https://gravatar.com/avatar/36641900b38575ca2a94c3998bb376a4.jpg?d=robohash"
+          },
+          "gender": {
+            "type": "boolean"
+          },
+          "weight": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "example": 75
+          },
+          "sportTime": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "example": 2
+          },
+          "dailyWater": {
+            "type": "integer",
+            "example": 1.5
+          }
+        },
+        "minItems": 1,
+        "required": []
+      },
+      "AddWaterData": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "example": "19-05-2024"
+          },
+          "amount": {
+            "type": "integer",
+            "example": 250
+          },
+          "time": {
+            "type": "string",
+            "example": "10:30"
+          }
+        },
+        "required": ["amount", "date", "time"]
+      },
+      "AddWaterDataResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "example": 201
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "664a13ed4598ebceb5f8970a"
+              },
+              "owner": {
+                "type": "string",
+                "example": "664a13ed4598ebceb5f8970b"
+              },
+              "date": {
+                "type": "string",
+                "example": "2024-05-19"
+              },
+              "amounts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "example": 250
+                    },
+                    "time": {
+                      "type": "string",
+                      "example": "10:30"
+                    },
+                    "_id": {
+                      "type": "string",
+                      "example": "664a13ed4598ebceb5f8970c"
+                    }
+                  }
+                }
               }
             }
+          }
+        }
+      },
+      "EditWaterData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "664a13ec9c876a558d0a0de2"
+          },
+          "amount": {
+            "type": "integer",
+            "example": 250
+          },
+          "time": {
+            "type": "string",
+            "example": "10:30"
+          }
+        },
+        "required": ["amount", "id", "time"]
+      },
+      "DeleteWaterData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "664a13ec9c876a558d0a0de2"
+          }
+        },
+        "required": ["id"]
+      },
+      "EditOrDeleteWaterDataResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "664a13ed4598ebceb5f8970a"
+              },
+              "owner": {
+                "type": "string",
+                "example": "664a13ed4598ebceb5f8970b"
+              },
+              "date": {
+                "type": "string",
+                "example": "2024-05-19"
+              },
+              "amounts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "example": 250
+                    },
+                    "time": {
+                      "type": "string",
+                      "example": "10:30"
+                    },
+                    "_id": {
+                      "type": "string",
+                      "example": "664a13ed4598ebceb5f8970c"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "DailyTrackResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "example": 250
+            },
+            "time": {
+              "type": "string",
+              "example": "10:30"
+            },
+            "_id": {
+              "type": "string",
+              "example": "664a13ed4598ebceb5f8970c"
+            }
+          }
+        }
+      },
+      "MonthlyTrackResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "664a13ed4598ebceb5f8970c"
+                },
+                "owner": {
+                  "type": "string",
+                  "example": "6649e160d0ab8ccdff25bf73"
+                },
+                "date": {
+                  "type": "string",
+                  "example": "19-05-2024"
+                },
+                "amounts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "amount": {
+                        "type": "integer",
+                        "example": 100
+                      },
+                      "time": {
+                        "type": "string",
+                        "example": "17:59"
+                      },
+                      "_id": {
+                        "type": "string",
+                        "example": "664a13ed4598ebceb5f8970c"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "totalAmount": {
+            "type": "integer",
+            "example": 1500
+          }
+        }
+      },
+      "BadRequest": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Error description"
+          }
+        }
+      },
+      "Forbidden": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Error description"
+          }
+        }
+      },
+      "EmailAlreadyInUse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Email already in use"
+          }
+        }
+      },
+      "ServerError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Error description"
+          }
+        }
+      },
+      "UserNotFound": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "User not found"
           }
         }
       }
     },
     "securitySchemes": {
-      "petstore_auth": {
-        "type": "oauth2",
-        "flows": {
-          "implicit": {
-            "authorizationUrl": "https://petstore3.swagger.io/oauth/authorize",
-            "scopes": {
-              "write:pets": "modify pets in your account",
-              "read:pets": "read your pets"
-            }
-          }
-        }
-      },
-      "api_key": {
-        "type": "apiKey",
-        "name": "api_key",
-        "in": "header"
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

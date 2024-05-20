@@ -27,23 +27,10 @@ app.use(express.static("public"));
 // Routes
 const pathPrefix = "/api/v1";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-app.get(`${pathPrefix}/users/forgot-password-form`, (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "mailForm.html"));
-});
-
-app.get(`${pathPrefix}/users/reset-password-form/:otp`, (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "passwordForm.html"));
-});
-
-app.use(express.static(path.join(__dirname, "public")));
-
 app.use(`${pathPrefix}/auth`, googleAuthRouter);
 app.use(`${pathPrefix}/users`, authRouter);
-app.use(`${pathPrefix}/contacts`, contactsRouter);
 app.use(`${pathPrefix}/water`, waterRouter);
+// app.use(`${pathPrefix}/contacts`, contactsRouter);
 
 app.use(
   `${pathPrefix}/api-docs`,

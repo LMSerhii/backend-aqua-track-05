@@ -108,6 +108,6 @@ authRouter.patch(
 
 authRouter.put("/update", auth, validateUpdatedField, updateUser);
 
-authRouter.put("/notify-to-verify", notify);
+authRouter.get("/notify-to-verify", notify);
 
 export default authRouter;
