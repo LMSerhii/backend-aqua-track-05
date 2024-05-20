@@ -28,7 +28,7 @@ app.use(`${pathPrefix}/users`, authRouter);
 app.use(`${pathPrefix}/water`, waterRouter);
 
 app.use(
-  `${pathPrefix}/api-docs`,
+  `${pathPrefix}/docs`,
   swaggerUI.serve,
   swaggerUI.setup(swaggerDocument)
 );
