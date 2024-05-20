@@ -25,11 +25,11 @@ export const sendEmail = async (name, email, verificationToken) => {
     <p>Click below to confirm your email address:</p>
     <p><a
       target="_blank"
-      href="${BASE_URL}:${PORT}/api/v1/users/verify/${verificationToken}"
+      href="${BASE_URL}/api/v1/users/verify/${verificationToken}"
       >Click verify email</a
     > 
     </p>
-    <p>${BASE_URL}:${PORT}/api/v1/users/verify/${verificationToken}</p>
+    <p>${BASE_URL}/api/v1/users/verify/${verificationToken}</p>
     <p>If you have problems, please paste the above URL into your web browser.</p>`,
   });
 
