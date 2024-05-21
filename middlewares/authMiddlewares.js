@@ -21,8 +21,9 @@ export const auth = catchAsync(async (req, res, next) => {
 
   const user = await verifyUserToken(token);
 
-  if (!user || !user.token || user.token !== token) return next(HttpError(401));
-
+  if (!user || !user.token || user.token !== token) {
+    return next(HttpError(401));
+  }
   req.user = user;
   next();
 });

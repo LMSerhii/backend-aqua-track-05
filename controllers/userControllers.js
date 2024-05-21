@@ -61,6 +61,7 @@ export const refresh = async (req, res) => {
 };
 
 export const logout = (req, res) => {
+  console.log("logout");
   res.sendStatus(204);
 };
 

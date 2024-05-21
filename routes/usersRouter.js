@@ -51,6 +51,15 @@ authRouter.post(
   signup
 );
 
+authRouter.post(
+  "/signin",
+  validateBody(loginUserSchema),
+  loginUserMiddleware,
+  login
+);
+
+authRouter.post("/logout", auth, logoutUserMiddleware, logout);
+
 authRouter.get(
   "/verify/:verificationToken",
   verifyByEmailMiddleware,
@@ -65,14 +74,7 @@ authRouter.post(
   resendVerifyController
 );
 
-authRouter.post(
-  "/signin",
-  validateBody(loginUserSchema),
-  loginUserMiddleware,
-  login
-);
-
-authRouter.post("/logout", auth, logoutUserMiddleware, logout);
+authRouter.get("/notify-to-verify", notify);
 
 authRouter.post(
   "/forgot-password",
@@ -99,6 +101,10 @@ authRouter.get("/current", auth, current);
 
 authRouter.get("/all", allUsers);
 
+authRouter.put("/update", auth, validateUpdatedField, updateUser);
+
+authRouter.delete("/delete", auth, deleteController);
+
 authRouter.patch(
   "/avatars",
   auth,
@@ -106,11 +112,5 @@ authRouter.patch(
   updateAvatarMiddleware,
   updateAvatarController
 );
-
-authRouter.put("/update", auth, validateUpdatedField, updateUser);
-
-authRouter.delete("/delete", auth, deleteController);
-
-authRouter.get("/notify-to-verify", notify);
 
 export default authRouter;

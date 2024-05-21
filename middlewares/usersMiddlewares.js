@@ -51,7 +51,6 @@ export const logoutUserMiddleware = catchAsync(async (req, res, next) => {
   const { _id } = req.user;
 
   await removeTokenService(_id);
-
   next();
 });
 
