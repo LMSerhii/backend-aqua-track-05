@@ -87,8 +87,11 @@ export const validateUpdatedField = (req, res, next) => {
 
 export const resetMiddleware = async (req, res, next) => {
   const { otp } = req.params;
+  console.log("otp bakend", otp);
 
   const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+  console.log("otp bakend", otpHash);
 
   const user = await User.findOne({
     passwordResetToken: otpHash,
