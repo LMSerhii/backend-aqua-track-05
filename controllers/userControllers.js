@@ -51,17 +51,22 @@ export const login = (req, res) => {
   });
 };
 
-export const refresh = async (req, res) => {
-  const { refreshToken } = req.body;
+export const refresh = catchAsync(async (req, res) => {
+  // const { refreshToken } = req.body;
 
-  const { token, refreshToken: newRefreshToken } = await refreshTokenService(
-    refreshToken
-  );
-  res.json({ token, refreshToken: newRefreshToken });
-};
+  const { user } = req;
+
+  // const { token, refreshToken: newRefreshToken } = await refreshTokenService(
+  //   refreshToken
+  // );
+
+  await user.createToken();
+  await user.save();
+
+  res.json({ token: user.token });
+});
 
 export const logout = (req, res) => {
-  console.log("logout");
   res.sendStatus(204);
 };
 

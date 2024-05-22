@@ -2,8 +2,10 @@ import {
   sendEmail,
   sendForgotTokenByEmail,
 } from "../services/emailServices.js";
+import { verifyRefreshToken } from "../services/jwtServices.js";
 import {
   findUserByEmailService,
+  findUserByID,
   findUserByRefreshToken,
   findUserByVerificationToken,
   updateVerify,
@@ -87,9 +89,15 @@ export const verifyRefreshTokenMiddleware = catchAsync(
   async (req, res, next) => {
     const { refreshToken } = req.body;
 
-    const isExist = await findUserByRefreshToken(refreshToken);
+    const { id } = verifyRefreshToken(refreshToken);
 
-    if (!isExist) return next(HttpError(403, "Token inactive"));
+    const user = await findUserByID(id);
+
+    // const isExist = await findUserByRefreshToken(refreshToken);
+
+    if (!user) return next(HttpError(403, "Token inactive"));
+
+    req.user = user;
 
     next();
   }
