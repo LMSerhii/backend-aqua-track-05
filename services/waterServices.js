@@ -32,36 +32,6 @@ export const countTotalAmountByDateService = async (ownerId, date) => {
   return { date, data: amounts, totalAmount };
 };
 
-// export const updateWaterAmountByIdService = async (
-//   recordId,
-//   amountId,
-//   amount,
-//   time
-// ) => {
-//   const waterRecord = await Water.findById(recordId);
-
-//   if (!waterRecord) {
-//     throw new Error("Record not found");
-//   }
-
-//   const mongooseId = mongoose.Types.ObjectId.isValid(amountId)
-//     ? amountId
-//     : mongoose.Types.ObjectId(amountId);
-
-//   const updatedAmount = waterRecord.amounts.id(mongooseId);
-
-//   if (!updatedAmount) {
-//     throw new Error("Amount not found");
-//   }
-
-//   updatedAmount.amount = amount;
-//   updatedAmount.time = time;
-
-//   await waterRecord.save();
-
-//   return updatedAmount;
-// };
-
 export const deleteWaterAmountService = async (recordId, amountId) => {
   try {
     const waterRecord = await Water.findById(recordId);

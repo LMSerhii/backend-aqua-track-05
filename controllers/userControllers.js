@@ -52,13 +52,7 @@ export const login = (req, res) => {
 };
 
 export const refresh = catchAsync(async (req, res) => {
-  // const { refreshToken } = req.body;
-
   const { user } = req;
-
-  // const { token, refreshToken: newRefreshToken } = await refreshTokenService(
-  //   refreshToken
-  // );
 
   await user.createToken();
   await user.save();

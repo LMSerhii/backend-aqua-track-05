@@ -93,8 +93,6 @@ export const verifyRefreshTokenMiddleware = catchAsync(
 
     const user = await findUserByID(id);
 
-    // const isExist = await findUserByRefreshToken(refreshToken);
-
     if (!user) return next(HttpError(403, "Token inactive"));
 
     req.user = user;
