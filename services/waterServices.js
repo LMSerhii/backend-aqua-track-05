@@ -2,102 +2,34 @@ import mongoose from "mongoose";
 
 import { Water } from "../models/waterModel.js";
 
-// export const addWaterAmountService = async (ownerID, body) => {
-//   try {
-//     const { amount, time, date } = body;
-//     let water = await Water.findOne({ owner: ownerID, date });
-
-//     if (water) {
-//       water.amounts.push({ amount, time });
-//     } else {
-//       water = new Water({
-//         owner: ownerID,
-//         date,
-//         amounts: [{ amount, time }],
-//       });
-//     }
-
-//     await water.save();
-
-//     return { success: true, statusCode: 201, data: water };
-//   } catch (error) {
-//     console.error(error);
-//     return { success: false, statusCode: 500, error: "Помилка сервера" };
-//   }
-// };
-
 export const addWaterAmountService = async (ownerID, body) => {
-  try {
-    const { amount, time, date } = body;
+  const { amount, time, date } = body;
 
-    // Шукаємо запис про воду для даного користувача і дати
-    const water = await Water.findOneAndUpdate(
-      { owner: ownerID, date },
-      // Додаємо новий запис про воду до масиву amounts або створюємо новий об'єкт води, якщо запис не існує
-      { $push: { amounts: { amount, time } } },
-      { new: true, upsert: true } // Якщо запис не знайдено, створюємо новий
-    );
+  // Шукаємо запис про воду для даного користувача і дати
+  const water = await Water.findOneAndUpdate(
+    { owner: ownerID, date },
+    // Додаємо новий запис про воду до масиву amounts або створюємо новий об'єкт води, якщо запис не існує
+    { $push: { amounts: { amount, time } } },
+    { new: true, upsert: true } // Якщо запис не знайдено, створюємо новий
+  );
 
-    return { success: true, statusCode: 201, data: water };
-  } catch (error) {
-    console.error(error);
-    return { success: false, statusCode: 500, error: "Помилка сервера" };
-  }
+  return { success: true, statusCode: 201, data: water };
 };
 
 export const countTotalAmountByDateService = async (ownerId, date) => {
-  try {
-    const query = { owner: ownerId };
+  const query = { owner: ownerId };
 
-    if (date) {
-      query.date = date;
-    }
-
-    const waterRecords = await Water.find(query);
-
-    const amounts = waterRecords.map((record) => record.amounts).flat();
-
-    const totalAmount = amounts.reduce((sum, record) => sum + record.amount, 0);
-
-    return { date, data: amounts, totalAmount };
-  } catch (error) {
-    console.error(error);
-    throw new Error("Server Error");
+  if (date) {
+    query.date = date;
   }
-};
 
-export const updateWaterAmountByIdService = async (
-  recordId,
-  amountId,
-  amount,
-  time
-) => {
-  try {
-    const waterRecord = await Water.findById(recordId);
+  const waterRecords = await Water.find(query);
 
-    if (!waterRecord) {
-      throw new Error("Record not found");
-    }
+  const amounts = waterRecords.map((record) => record.amounts).flat();
 
-    const mongooseId = mongoose.Types.ObjectId.isValid(amountId)
-      ? amountId
-      : mongoose.Types.ObjectId(amountId);
+  const totalAmount = amounts.reduce((sum, record) => sum + record.amount, 0);
 
-    const updatedAmount = waterRecord.amounts.id(mongooseId);
-
-    if (!updatedAmount) {
-      throw new Error("Amount not found");
-    }
-
-    updatedAmount.amount = amount;
-    updatedAmount.time = time;
-
-    await waterRecord.save();
-
-    return updatedAmount;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  return { date, data: amounts, totalAmount };
 };
 
 export const deleteWaterAmountService = async (recordId, amountId) => {

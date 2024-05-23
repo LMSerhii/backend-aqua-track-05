@@ -6,39 +6,32 @@ import {
   getTrackList,
   getWaterRecordsByUserAndMonth,
   updateEntry,
-  updateWaterAmountByIdService,
 } from "../services/waterServices.js";
 import { catchAsync } from "../utils/catchAsync.js";
 
 // * Додавання запису про спожиту воду *
-export const addWaterAmount = async (req, res) => {
-  try {
-    const result = await addWaterAmountService(req.user._id, req.body);
-    return res.status(result.statusCode).json(result);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, error: "Помилка сервера" });
-  }
-};
+export const addWaterAmount = catchAsync(async (req, res) => {
+  const result = await addWaterAmountService(req.user._id, req.body);
+
+  return res.status(201).json(result);
+});
 
 // * Підрахунок всіх записів про спожиту воду за день *
-export const countAllWaterRecordsByDate = async (req, res) => {
+export const countAllWaterRecordsByDate = catchAsync(async (req, res) => {
   const { id: ownerId } = req.user;
   const { date } = req.body;
 
-  try {
-    const result = await countTotalAmountByDateService(ownerId, date);
-    return res.status(200).json({ success: true, ...result });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, error: error.message });
-  }
-};
+  const result = await countTotalAmountByDateService(ownerId, date);
+
+  return res.status(200).json({ success: true, ...result });
+});
 
 // * Оновлення запису спожитої води *
 export const updateWaterAmount = catchAsync(async (req, res) => {
   const { foundedEntryId, amountId, newAmount } = req.query;
+
   const updatedEntry = await updateEntry(foundedEntryId, amountId, newAmount);
+
   res.json({ data: updatedEntry });
 });
 
@@ -69,6 +62,7 @@ export const getWaterRecordsByCurrentUserAndMonth = catchAsync(
   }
 );
 
+// * Отримання всіх записів користувача за день *
 export const dailyTrack = catchAsync(async (req, res) => {
   const { id: owner } = req.user;
   const { date } = req.query;
